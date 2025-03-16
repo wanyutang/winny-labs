@@ -1,3 +1,8 @@
+# Winny Labs README
+
+This is Winny's various technical experiments and notes. All of this is full of fun, random thoughts and records.
+
+
 # Chirpy Starter
 
 [![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
