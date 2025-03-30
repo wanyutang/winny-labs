@@ -27,6 +27,7 @@ _sass/vendors
 assets/js/dist
 
 ## Obsidian
-.obsidian
+.obsidian/workspace*.json
+.obsidian/graph.json
 
 .DS_Store

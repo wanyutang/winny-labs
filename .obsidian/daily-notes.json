@@ -1,0 +1,5 @@
+{
+  "folder": "_posts",
+  "template": "_template/post_tmp.md",
+  "format": "YYYY-MM-DD-[mac]"
+}
