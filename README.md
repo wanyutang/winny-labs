@@ -6,6 +6,9 @@ This is Winny's various technical experiments and notes. All of this is full of 
 - [dev Action](https://github.com/wanyutang/winny-labs/actions)
 
 
+` bundle exec jekyll post "My Cool PostXX"`
+
+
 # Chirpy Starter
 
 [![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
