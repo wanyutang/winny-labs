@@ -29,7 +29,4 @@ assets/js/dist
 ## Obsidian
 .obsidian/workspace*.json
 .obsidian/graph.json
-.obsidian/daily-notes.json
-
 .DS_Store
-.obsidian/daily-notes.json
