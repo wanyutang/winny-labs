@@ -29,13 +29,13 @@ platforms:
     # See: https://github.com/justinribeiro/share-to-mastodon#properties
     instances:
       - label: mastodon.social
-        link: "https://mastodon.social/"
+        link: "https://mastodon.social/share?text=Winny研究室%20https://wanyutang.github.io/winny-labs/"
       - label: mastodon.online
-        link: "https://mastodon.online/"
+        link: "https://mastodon.online/share?text=Winny研究室%20https://wanyutang.github.io/winny-labs/"
       - label: fosstodon.org
-        link: "https://fosstodon.org/"
+        link: "https://fosstodon.org/share?text=Winny研究室%20https://wanyutang.github.io/winny-labs/"
       - label: photog.social
-        link: "https://photog.social/"
+        link: "https://photog.social/share?text=Winny研究室%20https://wanyutang.github.io/winny-labs/"
 
   - type: Bluesky
     icon: "fa-brands fa-bluesky"
