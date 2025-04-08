@@ -1,9 +1,9 @@
-# _plugins/custom_image_tag.rb
+# _plugins/custom_markdown_converter.rb
 module Jekyll
-  class CustomImageTag < Jekyll::Converters::Markdown
+  class CustomMarkdownConverter < Jekyll::Converters::Markdown
     def convert(content)
-      # 將 `![[filename | width]]` 或 `![[filename]]` 轉換為 <img> 標籤
-      content.gsub(/!\[\[(.+?)(?:\s*\|\s*(\d+))?\]\]/) do
+      # 處理 `![[filename | width]]` 或 `![[filename]]` 特定格式
+      content = content.gsub(/!\[\[(.+?)(?:\s*\|\s*(\d+))?\]\]/) do
         filename = Regexp.last_match(1).strip
         width = Regexp.last_match(2)
         if width
@@ -12,6 +12,9 @@ module Jekyll
           "<img src='/assets/images/#{filename}' alt='#{filename}' />"
         end
       end
+
+      # 調用原始 Markdown 渲染邏輯
+      super(content)
     end
   end
 end
