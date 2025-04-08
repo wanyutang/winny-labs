@@ -10,10 +10,12 @@ tags:
 ## 📁 新增專案
 
 - 新增專案時，**專案 ID 不可重複**
+
   ![[Screenshot 2025-04-05 at 4.18.41 PM.jpg | 500]]
   ![[Screenshot 2025-04-05 at 4.19.10 PM.jpg | 500]]
 
 - 啟用 Cloud Shell
+
   ![[Screenshot 2025-04-05 at 11.52.13 AM.jpg | 100]]
   ![[Screenshot 2025-04-05 at 4.21.24 PM.jpg | 300]]
   ![[Screenshot 2025-04-05 at 4.21.07 PM.jpg]]
