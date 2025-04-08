@@ -9,7 +9,7 @@ tags:
 
 ![Java](https://img.shields.io/badge/Language-Java-orange?logo=java&style=flat) ![Spring Boot](https://img.shields.io/badge/Framework-Spring%20Boot-blue?logo=spring&style=flat) ![GCP](https://img.shields.io/badge/Cloud-GCP-brightgreen?logo=googlecloud&style=flat) ![Markdown](https://img.shields.io/badge/Format-Markdown-lightgrey?logo=markdown&style=flat) ![App Engine](https://img.shields.io/badge/Service-App%20Engine-yellow?logo=googlecloud&style=flat) ![Maven](https://img.shields.io/badge/Build-Maven-red?logo=apachemaven&style=flat)
 
-- 本文參考[將 Spring Boot 應用程式部署至 App Engine 標準環境-Google Codelabs](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)官方教學，詳細記錄將 Spring Boot 應用程式部署至 App Engine 標準環境的操作過程。
+- 本文參考[將 Spring Boot 應用程式部署至 App Engine 標準環境｜Google Codelabs](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)官方教學，詳細記錄將 Spring Boot 應用程式部署至 App Engine 標準環境的操作過程。
 - 在記錄過程中，補充了實際操作的畫面截圖，以便後續檢視與參考，確保每個步驟清楚無誤。
 - 此筆記適合需要部署 Spring Boot 到 Google App Engine 的開發者，作為學習與實踐時的輔助資料。
 
@@ -215,7 +215,7 @@ http://<project-id>.appspot.com
 
 ## 🔗 參考資料
 
-- [將 Spring Boot 應用程式部署至 App Engine 標準環境](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)
+- [將 Spring Boot 應用程式部署至 App Engine 標準環境｜Google Codelabs](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)
 - [App Engine 地區與資源限制](https://cloud.google.com/appengine/docs/locations)  
 - [gcloud app create 官方文件](https://cloud.google.com/sdk/gcloud/reference/app/create)  
 - [Spring Boot 應用部署教學 (Codelab)](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)  
