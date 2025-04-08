@@ -165,8 +165,7 @@ gcloud app create --region=asia-northeast1
 ```bash
 gcloud app browse
 ```
-
-網址範例：
+- 網址範例：
 ```
 http://<project-id>.appspot.com
 ```
