@@ -1,4 +1,4 @@
-# _plugins/custom_img_converter.rb
+# _plugins/backlink_converter.rb
 module Jekyll
   class UnifiedMarkdownConverter < Jekyll::Converters::Markdown
     def convert(content)
