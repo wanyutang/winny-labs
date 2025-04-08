@@ -13,12 +13,10 @@ tags:
 ## 📁 新增專案
 
 - 新增專案時，**專案 ID 不可重複**
-
   ![[Screenshot 2025-04-05 at 4.18.41 PM.jpg | 500]]
   ![[Screenshot 2025-04-05 at 4.19.10 PM.jpg | 500]]
 
 - 啟用 Cloud Shell
-
   ![[Screenshot 2025-04-05 at 11.52.13 AM.jpg | 100]]
   ![[Screenshot 2025-04-05 at 4.21.24 PM.jpg | 300]]
   ![[Screenshot 2025-04-05 at 4.21.07 PM.jpg]]
@@ -28,40 +26,35 @@ tags:
 ## 🚀 初始化 Spring Boot 並 push 至 GitHub
 
 - 確認已通過驗證：
-```bash
-gcloud auth list
-```
-
+  ```bash
+  gcloud auth list
+  ```
 - 輸出範例：
-```bash
-Credentialed Accounts
-ACTIVE  ACCOUNT
-<my_account>@<my_domain.com>
-To set the active account, run:
-    $ gcloud config set account `ACCOUNT`
-```
-
+  ```bash
+  Credentialed Accounts
+  ACTIVE  ACCOUNT
+  * <my_account>@<my_domain.com>
+  To set the active account, run:
+      $ gcloud config set account `ACCOUNT`
+  ```
 - 確認目前的 GCP 專案：
-```bash
-gcloud config list project
-```
-
+  ```bash
+  gcloud config list project
+  ```
 - 輸出範例：
-```bash
-[core]
-project = <PROJECT_ID>
-```
-
+  ```bash
+  [core]
+  project = <PROJECT_ID>
+  ```
 - 使用 Spring Initializr 指令建置專案：
-```bash
-curl https://start.spring.io/starter.tgz \
-  -d bootVersion=3.3.0 \
-  -d dependencies=web \
-  -d type=maven-project \
-  -d baseDir=gae-standard-example | tar -xzvf -
-```
-
-![[Screenshot 2025-04-05 at 5.20.34 PM.jpg | 300]]
+  ```bash
+  curl https://start.spring.io/starter.tgz \
+    -d bootVersion=3.3.0 \
+    -d dependencies=web \
+    -d type=maven-project \
+    -d baseDir=gae-standard-example | tar -xzvf -
+  ```
+  ![[Screenshot 2025-04-05 at 5.20.34 PM.jpg | 300]]
 
 - 初始化 Git 並推送到 GitHub：
 ```bash
@@ -101,17 +94,16 @@ git push -u https://<YOUR_USERNAME>:<YOUR_TOKEN>@github.com/<YOUR_USERNAME>/demo
 ![[Screenshot 2025-04-05 at 1.55.43 PM.jpg]]
 
 - 建立 `app.yaml`：
-```bash
-mkdir -p src/main/appengine/
-touch src/main/appengine/app.yaml
-```
+  ```bash
+  mkdir -p src/main/appengine/
+  touch src/main/appengine/app.yaml
+  ```
 
 - app.yaml 設定範例：
-```yaml
-runtime: java17
-instance_class: F1
-```
-
+  ```yaml
+  runtime: java17
+  instance_class: F1
+  ```
   ![[Screenshot 2025-04-05 at 2.00.35 PM.jpg | 500]]
 
 > `F1` 為最小執行個體，正式部署請參考：[[Google App Engine 執行個體類型說明]]
@@ -124,7 +116,6 @@ instance_class: F1
 - 瀏覽器會自動開啟服務頁面
   ![[Screenshot 2025-04-05 at 4.25.22 PM.jpg]]
   ![[Screenshot 2025-04-05 at 4.25.48 PM.jpg | 500]]
-
 - 或在下方埠口控制台中點選網址
   ![[Screenshot 2025-04-05 at 4.27.01 PM.jpg]]
 
@@ -133,9 +124,7 @@ instance_class: F1
 ## ☁️ 建立 App Engine 應用
 
 - App Engine 區域一旦建立後 **無法修改**，若需變更只能刪除整個 GCP 專案重新建立。
-
-### 常見可選區域一覽
-
+- 常見可選區域一覽
 | 區域代碼           | 地理位置     | 適用情境                     |
 |--------------------|--------------|------------------------------|
 | `asia-east1`       | 台灣（新北） | 延遲最低，推薦台灣本地部署   |
@@ -159,11 +148,10 @@ gcloud app create --region=asia-northeast1
 
 ## 🚢 部署至 App Engine
 
-使用 Maven 執行部署：
+- 使用 Maven 執行部署：
 ```bash
 ./mvnw -DskipTests package appengine:deploy
 ```
-
 ![[Screenshot 2025-04-05 at 5.19.28 PM.jpg | 500]]
 
 > 首次部署作業可能需等待數分鐘，系統會自動建立執行環境、負載平衡器等基礎架構。
@@ -182,7 +170,6 @@ gcloud app browse
 ```
 http://<project-id>.appspot.com
 ```
-
 ![[Screenshot 2025-04-05 at 5.16.49 PM.jpg]]
 ![[Screenshot 2025-04-05 at 5.14.48 PM.jpg | 300]]
 
