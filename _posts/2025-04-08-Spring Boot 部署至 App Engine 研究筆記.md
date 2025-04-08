@@ -13,10 +13,12 @@ tags:
 ## 📁 新增專案
 
 - 新增專案時，**專案 ID 不可重複**
+
   ![[Screenshot 2025-04-05 at 4.18.41 PM.jpg | 500]]
   ![[Screenshot 2025-04-05 at 4.19.10 PM.jpg | 500]]
 
 - 啟用 Cloud Shell
+
   ![[Screenshot 2025-04-05 at 11.52.13 AM.jpg | 100]]
   ![[Screenshot 2025-04-05 at 4.21.24 PM.jpg | 300]]
   ![[Screenshot 2025-04-05 at 4.21.07 PM.jpg]]
@@ -29,18 +31,20 @@ tags:
   ```bash
   gcloud auth list
   ```
+
 - 輸出範例：
   ```bash
   Credentialed Accounts
   ACTIVE  ACCOUNT
   * <my_account>@<my_domain.com>
   To set the active account, run:
-      $ gcloud config set account `ACCOUNT`
-  ```
+    $ gcloud config set account `ACCOUNT`
+    ```
 - 確認目前的 GCP 專案：
   ```bash
   gcloud config list project
   ```
+
 - 輸出範例：
   ```bash
   [core]
@@ -57,41 +61,40 @@ tags:
   ![[Screenshot 2025-04-05 at 5.20.34 PM.jpg | 300]]
 
 - 初始化 Git 並推送到 GitHub：
-```bash
-cd gae-standard-example
-git init
-git add .
-git commit -m "Initial commit from Spring Initializr"
-git branch -M main
-git remote add origin https://github.com/<USER NAME>/demo-gae-standard-example.git
-git push https://<USER NAME>@github.com/<USER NAME>/demo-gae-standard-example.git -u origin main --force
-git push -u https://<YOUR_USERNAME>:<YOUR_TOKEN>@github.com/<YOUR_USERNAME>/demo-gae-standard-example.git main --force
-```
+  ```bash
+  cd gae-standard-example
+  git init
+  git add .
+  git commit -m "Initial commit from Spring Initializr"
+  git branch -M main
+  git remote add origin https://github.com/<USER NAME>/demo-gae-standard-example.git
+  git push https://<USER NAME>@github.com/<USER NAME>/demo-gae-standard-example.git -u origin main --force
+  git push -u https://<YOUR_USERNAME>:<YOUR_TOKEN>@github.com/<YOUR_USERNAME>/demo-gae-standard-example.git main --force
+  ```
 
-`YOUR_TOKEN` 來源請參考 [[GitHub Fine-grained Token 設定說明]]
+- `YOUR_TOKEN` 來源請參考 [[GitHub Fine-grained Token 設定說明]]
 
 ---
 
 ## ⚙️ App Engine 設定調整
 
 - 在 `pom.xml` 新增 App Engine Maven 外掛：
-```xml
-<build>
-  <plugins>
-    <plugin>
-      <groupId>com.google.cloud.tools</groupId>
-      <artifactId>appengine-maven-plugin</artifactId>
-      <version>2.4.4</version>
-      <configuration>
-        <version>1</version>
-        <projectId>GCLOUD_CONFIG</projectId>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
-```
-
-![[Screenshot 2025-04-05 at 1.55.43 PM.jpg]]
+  ```xml
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>appengine-maven-plugin</artifactId>
+          <version>2.4.4</version>
+          <configuration>
+            <version>1</version>
+            <projectId>GCLOUD_CONFIG</projectId>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  ```
+  ![[Screenshot 2025-04-05 at 1.55.43 PM.jpg]]
 
 - 建立 `app.yaml`：
   ```bash
@@ -106,7 +109,7 @@ git push -u https://<YOUR_USERNAME>:<YOUR_TOKEN>@github.com/<YOUR_USERNAME>/demo
   ```
   ![[Screenshot 2025-04-05 at 2.00.35 PM.jpg | 500]]
 
-> `F1` 為最小執行個體，正式部署請參考：[[Google App Engine 執行個體類型說明]]
+- `F1` 為最小執行個體，正式部署請參考：[[Google App Engine 執行個體類型說明]]
 
 ---
 
