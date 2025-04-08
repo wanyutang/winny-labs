@@ -27,7 +27,7 @@ tags:
 gcloud auth list
 ```
 
-輸出範例：
+- 輸出範例：
 ```bash
 Credentialed Accounts
 ACTIVE  ACCOUNT
@@ -42,7 +42,7 @@ To set the active account, run:
 gcloud config list project
 ```
 
-輸出範例：
+- 輸出範例：
 ```bash
 [core]
 project = <PROJECT_ID>
@@ -213,7 +213,9 @@ http://<project-id>.appspot.com
 5. **關閉帳單（Billing）**  
    - 導致 App Engine 停止提供資源  
    - 注意會影響整個專案的其他資源使用
+
 ---
+
 ## 🔗 參考資料
 
 - [將 Spring Boot 應用程式部署至 App Engine 標準環境](https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot?hl=zh-tw)
