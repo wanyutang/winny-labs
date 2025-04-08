@@ -30,6 +30,7 @@ gcloud auth list
 ```
 
 - 輸出範例：
+
 ```bash
 Credentialed Accounts
 ACTIVE  ACCOUNT
