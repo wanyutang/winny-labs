@@ -36,8 +36,7 @@ gcloud auth list
 ```bash
 Credentialed Accounts
 ACTIVE  ACCOUNT
-*       <my_account>@<my_domain.com>
-
+<my_account>@<my_domain.com>
 To set the active account, run:
     $ gcloud config set account `ACCOUNT`
 ```
