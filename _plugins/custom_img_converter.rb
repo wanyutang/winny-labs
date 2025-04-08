@@ -13,14 +13,14 @@ module Jekyll
         end
       end
 
-      # 處理 shields.io 的 Markdown 圖片
-      content = content.gsub(/!\[.*?\]\((https:\/\/img\.shields\.io\/.+?)\)/) do
-        url = Regexp.last_match(1)
+      # 處理 shields.io 的 HTML 格式
+      content = content.gsub(/<a href="(https:\/\/img\.shields\.io\/.+?)".*?><img src="(https:\/\/img\.shields\.io\/.+?)".*?><\/a>/) do
+        url = Regexp.last_match(2)
         "<img src='#{url}' alt='shields badge' loading='lazy'>"
       end
 
       # 調用原始 Markdown 渲染邏輯處理其他內容
-      # super(content)
+      super(content)
     end
   end
 end
