@@ -20,7 +20,7 @@ module Jekyll
       end
 
       # 調用原始 Markdown 渲染邏輯處理其他內容
-      super(content)
+      # super(content)
     end
   end
 end
