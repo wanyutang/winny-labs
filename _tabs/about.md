@@ -7,4 +7,9 @@ order: 4
 > Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
 {: .prompt-tip }
 
-{% include ../README.md %}
+{% capture readme_content %}
+{{ site.static_files | where: "name", "README.md" | first | read }}
+{% endcapture %}
+
+{{ readme_content | markdownify }}
+
