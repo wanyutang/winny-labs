@@ -6,7 +6,9 @@ categories:
   - Inbox
 tags:
 ---
-tags: ![Java](https://img.shields.io/badge/Language-Java-orange?logo=java&style=flat) ![Spring Boot](https://img.shields.io/badge/Framework-Spring%20Boot-blue?logo=spring&style=flat) ![GCP](https://img.shields.io/badge/Cloud-GCP-brightgreen?logo=googlecloud&style=flat) ![Markdown](https://img.shields.io/badge/Format-Markdown-lightgrey?logo=markdown&style=flat) ![App Engine](https://img.shields.io/badge/Service-App%20Engine-yellow?logo=googlecloud&style=flat) ![Maven](https://img.shields.io/badge/Build-Maven-red?logo=apachemaven&style=flat)
+
+![Java](https://img.shields.io/badge/Language-Java-orange?logo=java&style=flat) ![Spring Boot](https://img.shields.io/badge/Framework-Spring%20Boot-blue?logo=spring&style=flat) ![GCP](https://img.shields.io/badge/Cloud-GCP-brightgreen?logo=googlecloud&style=flat) ![Markdown](https://img.shields.io/badge/Format-Markdown-lightgrey?logo=markdown&style=flat) ![App Engine](https://img.shields.io/badge/Service-App%20Engine-yellow?logo=googlecloud&style=flat) ![Maven](https://img.shields.io/badge/Build-Maven-red?logo=apachemaven&style=flat)
+
 
 ## 📁 新增專案
 
@@ -31,7 +33,6 @@ gcloud auth list
 ```
 
 - 輸出範例：
-
 ```bash
 Credentialed Accounts
 ACTIVE  ACCOUNT
