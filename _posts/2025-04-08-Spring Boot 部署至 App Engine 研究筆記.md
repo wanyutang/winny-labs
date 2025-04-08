@@ -81,7 +81,6 @@ git push -u https://<YOUR_USERNAME>:<YOUR_TOKEN>@github.com/<YOUR_USERNAME>/demo
 ## ⚙️ App Engine 設定調整
 
 - 在 `pom.xml` 新增 App Engine Maven 外掛：
-
 ```xml
 <build>
   <plugins>
@@ -112,7 +111,7 @@ runtime: java17
 instance_class: F1
 ```
 
-![[Screenshot 2025-04-05 at 2.00.35 PM.jpg | 500]]
+  ![[Screenshot 2025-04-05 at 2.00.35 PM.jpg | 500]]
 
 > `F1` 為最小執行個體，正式部署請參考：[[Google App Engine 執行個體類型說明]]
 
