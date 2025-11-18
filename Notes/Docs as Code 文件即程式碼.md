@@ -1,4 +1,4 @@
-# Docs as Code by Javadoc 文件即程式碼
+# Docs as Code 文件即程式碼
 
 - 這是一份文件即程式碼 (Docs as Code, DaC)核心理念和實務做法說明
 - 以下示範說明如何透過程式碼註解實現文件與程式碼的同步維護
