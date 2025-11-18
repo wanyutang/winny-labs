@@ -6,6 +6,15 @@ package com.demo;
  */
 public class DemoOpenAccount {
 
+    @Autowired
+    AMLComp amlComp;
+
+    @Autowired
+    EmailComp emailComp;
+
+    @Autowired
+    DEMAPI demAPI;
+
     /**
      * 開戶流程主要步驟 SD 註解文件
      * <pre>
@@ -14,9 +23,11 @@ public class DemoOpenAccount {
      *     1-2: 解密身分證字號
      * 2. AML 黑名單檢查
      *     2-1: 呼叫 AML 合規API
-     * 3. 呼叫 DEMO379 電文API 並根據回傳結果更新主檔
+     * 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
      *     3-1: 若回傳錯誤 -> 狀態設為 E，拋例外
      *     3-2: 若成功 -> 狀態設為 C，記錄開戶帳號
+     *      - DEMO379 電文API = demAPI.sendOpenAccount
+     *      - 主檔 DB資料 = db.getAccountInfo
      * 4. FTP 上傳印鑑系統
      *     4-1: 上傳失敗僅記錄log
      * 5. 驗證 Email 認證結果
@@ -30,11 +41,11 @@ public class DemoOpenAccount {
         info.setIdNo(EncodeUtil.base64Decode(info.getIdNo()));
 
         // 2-1. AML 黑名單合規API電文呼叫
-        String amlCode = antiFraudAPI.check(info);
+        String amlCode = amlComp.check(info);
 
         // 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
         try {
-            Demo379Response demoRes = demoAPI.sendOpenAccount(info, amlCode); // SD: DEMO379 API呼叫 
+            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode); // SD: DEMO379 API呼叫 
             if ("E".equals(demoRes.getStatus())) {
                 // 3-1. 回傳錯誤，更新主檔狀態E並拋異常
                 db.updateStatus(info.getId(), "E");
@@ -55,7 +66,7 @@ public class DemoOpenAccount {
         }
 
         // 5. Email 認證流程
-        boolean mailValid = emailAPI.validate(info.getMail());
+        boolean mailValid = emailComp.validate(info.getMail());
 
         return DemoOpenAccountRes.builder()
             .mail(info.getMail())
