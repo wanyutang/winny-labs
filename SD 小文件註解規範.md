@@ -81,7 +81,7 @@ public class DemoOpenAccount {
 
         // 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
         try {
-            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode); // SD: DEMO379 API呼叫 
+            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode);
             if ("E".equals(demoRes.getStatus())) {
                 // 3-1. 回傳錯誤，更新主檔狀態E並拋異常
                 db.updateStatus(info.getId(), "E");
