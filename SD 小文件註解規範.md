@@ -34,89 +34,77 @@ Comment-Driven Development (CDD)
 ## 範例（Demo 版）——簡化新版，流程註解同步維護
 
 ```java name=OpenAccountSDDemo.java
-package com.demo.sd;
+package com.demo;
 
-// Demo: SD 註解版開戶流程
-public class OpenAccountSDDemo {
+/**
+ * 開戶確認 SD 文件與程式註解規範 DEMO SDD—Software Design Document
+ * 全流程註解與程式同步設計範例
+ */
+public class DemoOpenAccount {
+
+    @Autowired
+    AMLComp amlComp;
+
+    @Autowired
+    EmailComp emailComp;
+
+    @Autowired
+    DEMAPI demAPI;
 
     /**
-     * 開戶流程主要步驟 SD 註解
+     * 開戶流程主要步驟 SD 註解文件
      * <pre>
-     * [Step 1] 取得開戶主檔資料
-     * [Step 2] AML 黑名單檢查
-     * [Step 3] 呼叫 NS359 電文並根據回傳結果更新主檔
-     *     3-1: 回傳錯誤 -> 狀態為 E，拋例外
-     *     3-2: 成功 -> 狀態為 C，記錄開戶帳號
-     * [Step 4] FTP 上傳印鑑系統
-     * [Step 5] WebService 上傳印鑑系統（失敗要記錄錯誤）
-     * [Step 6] 判斷並加辦信用卡流程
-     *     6-1: 舊戶/新戶不同流程
-     *     6-2: 失敗時更新加辦項目狀態
-     * [Step 7] 加辦一箭雙開（證券帳號）
-     * [Step 8] 驗證 Email 認證結果
+     * 1. 取得開戶主檔資料
+     *     1-1: 取得主檔 DB資料
+     *     1-2: 解密身分證字號
+     * 2. AML 黑名單檢查
+     *     2-1: 呼叫 AML 合規API
+     * 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
+     *     3-1: 若回傳錯誤 -> 狀態設為 E，拋例外
+     *     3-2: 若成功 -> 狀態設為 C，記錄開戶帳號
+     *      - 開戶電文 DEMO379 電文API = demAPI.sendOpenAccount
+     *      - 主檔 DB資料 = db.getAccountInfo
+     * 4. FTP 上傳印鑑系統
+     *     4-1: 上傳失敗僅記錄log
+     * 5. 驗證 Email 認證結果
      * </pre>
      */
-    public OpenAcctRes openAcct() {
-        // [Step 1] 取得主檔 DB資料
-        AccountInfo info = db.getAccountInfo(session.getCaseNo()); // SD: 這裡取主檔資料
-        // 解密身分證字號
+    public DemoOpenAccountRes openAcct() {
+        // 1-1. 取得主檔 DB資料
+        AccountInfo info = db.getAccountInfo(session.getCaseNo());
+
+        // 1-2. 解密身分證字號
         info.setIdNo(EncodeUtil.base64Decode(info.getIdNo()));
 
-        // [Step 2] AML 黑名單電文呼叫
-        String amlCode = amlAPI.check(info);
+        // 2-1. AML 黑名單合規API電文呼叫
+        String amlCode = amlComp.check(info);
 
-        // [Step 3] 呼叫 NS359電文 (重要)
+        // 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
         try {
-            NS359Res ns359Res = ns359API.send(info, amlCode); // SD: NS359呼叫，重要開戶狀態判斷
-            if ("E".equals(ns359Res.getStatus())) {
-                // 3-1: 回傳錯誤，更新錯誤狀態
+            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode); // SD: DEMO379 API呼叫 
+            if ("E".equals(demoRes.getStatus())) {
+                // 3-1. 回傳錯誤，更新主檔狀態E並拋異常
                 db.updateStatus(info.getId(), "E");
-                throw new Exception("NS359 fail");
+                throw new Exception("DEMO379 fail");
             } else {
-                // 3-2: 成功，更新帳號
-                db.updateAccountNo(info.getId(), ns359Res.getAccountNo());
+                // 3-2. 成功，更新主檔帳號資訊
+                db.updateAccountNo(info.getId(), demoRes.getAccountNo());
             }
         } catch (Exception e) {
-            // SD: 異常處理
-            System.out.println("Error on NS359: " + e.getMessage());
+            System.out.println("Error on DEMO379: " + e.getMessage());
         }
 
-        // [Step 4] 印鑑 FTP 上傳 (失敗僅log)
+        // 4. 印鑑 FTP 上傳流程 - 失敗僅log
         try {
             ftpAPI.uploadSeal(info);
         } catch (Exception e) {
-            // SD: FTP失敗僅記錄log
             System.out.println("Seal FTP error: " + e.getMessage());
         }
 
-        // [Step 5] 印鑑 WebService 上傳（失敗記錯誤）
-        try {
-            sealAPI.upload(info);
-        } catch (Exception e) {
-            db.updateSealError(info.getId(), "webService failed"); // SD: WebService失敗記錄錯誤
-        }
+        // 5. Email 認證流程
+        boolean mailValid = emailComp.validate(info.getMail());
 
-        // [Step 6] 信用卡辦理流程分舊戶新戶
-        if (info.isApplyCreditCard()) {
-            if (info.isOldCustomer()) {
-                // 舊戶流程
-                creditAPI.applyOldCustomer(info);
-            } else {
-                // 新戶流程
-                creditAPI.applyNewCustomer(info);
-            }
-        }
-
-        // [Step 7] 加辦證券帳號
-        if (info.isApplySecurities()) {
-            securitiesAPI.open(info);
-        }
-
-        // [Step 8] email認證
-        boolean mailValid = emailAPI.validate(info.getMail());
-
-        // 回傳結果
-        return OpenAcctRes.builder()
+        return DemoOpenAccountRes.builder()
             .mail(info.getMail())
             .emailVerified(mailValid)
             .build();
