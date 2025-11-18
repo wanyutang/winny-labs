@@ -26,7 +26,7 @@ public class DemoOpenAccount {
      * 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
      *     3-1: 若回傳錯誤 -> 狀態設為 E，拋例外
      *     3-2: 若成功 -> 狀態設為 C，記錄開戶帳號
-     *      - DEMO379 電文API = demAPI.sendOpenAccount
+     *      - 開戶電文 DEMO379 電文API = demAPI.sendOpenAccount
      *      - 主檔 DB資料 = db.getAccountInfo
      * 4. FTP 上傳印鑑系統
      *     4-1: 上傳失敗僅記錄log
