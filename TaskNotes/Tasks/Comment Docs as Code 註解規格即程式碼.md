@@ -1,3 +1,13 @@
+---
+status: in-progress
+priority: normal
+scheduled: 2025-11-18
+dateCreated: 2025-11-18T17:42:51.279+08:00
+dateModified: 2025-11-18T17:42:51.279+08:00
+tags:
+  - task
+---
+
 以下示範說明如何透過程式碼註解實現文件與程式碼的同步維護
 
 - **程式碼註解哲學：** 什麼時候應該寫行內（Inline）註解，以及寫「為什麼」（Why）而不是「做什麼」（What）的原則
