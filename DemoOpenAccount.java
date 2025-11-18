@@ -1,10 +1,10 @@
-package com.demo.sd;
+package com.demo;
 
 /**
  * 開戶確認 SD 文件與程式註解規範 DEMO SDD—Software Design Document
  * 全流程註解與程式同步設計範例
  */
-public class OpenAccountSDDemo {
+public class DemoOpenAccount {
 
     /**
      * 開戶流程主要步驟 SD 註解文件
@@ -22,7 +22,7 @@ public class OpenAccountSDDemo {
      * 5. 驗證 Email 認證結果
      * </pre>
      */
-    public OpenAcctRes openAcct() {
+    public DemoOpenAccountRes openAcct() {
         // 1-1. 取得主檔 DB資料
         AccountInfo info = db.getAccountInfo(session.getCaseNo());
 
@@ -57,7 +57,7 @@ public class OpenAccountSDDemo {
         // 5. Email 認證流程
         boolean mailValid = emailAPI.validate(info.getMail());
 
-        return OpenAcctRes.builder()
+        return DemoOpenAccountRes.builder()
             .mail(info.getMail())
             .emailVerified(mailValid)
             .build();
