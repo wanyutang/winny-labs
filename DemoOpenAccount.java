@@ -28,7 +28,7 @@ public class DemoOpenAccount {
      *     3-2: 若成功 -> 狀態設為 C，記錄開戶帳號
      *      - 開戶電文 DEMO379 電文API = demAPI.sendOpenAccount
      *      - 主檔 DB資料 = db.getAccountInfo
-     * 4. FTP 上傳印鑑系統
+     * 4. FTP 上傳
      *     4-1: 上傳失敗僅記錄log
      * 5. 驗證 Email 認證結果
      * </pre>
@@ -45,7 +45,7 @@ public class DemoOpenAccount {
 
         // 3. 呼叫 DEMO379 電文API並根據回傳結果更新主檔
         try {
-            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode); // SD: DEMO379 API呼叫 
+            Demo379Response demoRes = demAPI.sendOpenAccount(info, amlCode);
             if ("E".equals(demoRes.getStatus())) {
                 // 3-1. 回傳錯誤，更新主檔狀態E並拋異常
                 db.updateStatus(info.getId(), "E");
@@ -58,7 +58,7 @@ public class DemoOpenAccount {
             System.out.println("Error on DEMO379: " + e.getMessage());
         }
 
-        // 4. 印鑑 FTP 上傳流程 - 失敗僅log
+        // 4. FTP 上傳流程 - 失敗僅log
         try {
             ftpAPI.uploadSeal(info);
         } catch (Exception e) {
