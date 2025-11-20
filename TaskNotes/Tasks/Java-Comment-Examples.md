@@ -1,17 +1,31 @@
 ---
 status: in-progress
 priority: normal
-scheduled: 2025-11-18
-dateCreated: 2025-11-18T17:42:51.279+08:00
-dateModified: 2025-11-19T14:35:23.280+08:00
+scheduled: 2025-11-18T00:00:00.000Z
+dateCreated: 2025-11-18T09:42:51.279Z
+dateModified: 2025-11-19T06:35:23.280Z
 tags:
   - task
 contexts:
   - labs
 projects: []
+gists:
+  - id: 221b491ca8557ce3bb67043605f2f2ec
+    url: 'https://gist.github.com/wanyutang/221b491ca8557ce3bb67043605f2f2ec'
+    createdAt: '2025-11-20T08:31:33Z'
+    updatedAt: '2025-11-20T09:12:30Z'
+    filename: winnygist.labs.Java-Comment-Examples.md
+    isPublic: true
+    baseUrl: 'https://api.github.com'
 ---
 
-以下示範說明如何透過程式碼註解實現文件與程式碼的同步維護
+## Table of Contents
+
+--
+
+## 示範
+
+以下示範說明如何透過程式碼註解實現文件與程式碼的同步維護 xx
 
 - **程式碼註解哲學：** 什麼時候應該寫行內（Inline）註解，以及寫「為什麼」（Why）而不是「做什麼」（What）的原則
 - 註解既然寫在程式裡，也是**需要維護**的，否則必定發生**註解騙人**的情況
