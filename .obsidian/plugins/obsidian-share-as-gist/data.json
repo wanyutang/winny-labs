@@ -3,5 +3,5 @@
   "enableUpdatingGistsAfterCreation": true,
   "enableAutoSaving": true,
   "showAutoSaveNotice": true,
-  "includeTableOfContents": false
+  "includeTableOfContents": true
 }
