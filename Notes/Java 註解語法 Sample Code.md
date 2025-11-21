@@ -3,18 +3,18 @@ status: done
 priority: normal
 scheduled: 2025-11-21T00:00:00.000Z
 dateCreated: 2025-11-21T07:14:03.355Z
-dateModified: 2025-11-21T17:05:47.802+08:00
+dateModified: 2025-11-21T09:05:47.802Z
 tags:
   - task
 gists:
   - id: 512709032e5aae47b7409b7d049272b0
-    url: https://gist.github.com/wanyutang/512709032e5aae47b7409b7d049272b0
-    createdAt: 2025-11-21T07:23:31Z
-    updatedAt: 2025-11-21T07:23:48Z
+    url: 'https://gist.github.com/wanyutang/512709032e5aae47b7409b7d049272b0'
+    createdAt: 2025-11-21T07:23:31.000Z
+    updatedAt: '2025-11-21T09:16:24Z'
     filename: winnygist.labs.Java 註解語法 Sample Code.md
     isPublic: true
-    baseUrl: https://api.github.com
-completedDate: 2025-11-21
+    baseUrl: 'https://api.github.com'
+completedDate: 2025-11-21T00:00:00.000Z
 ---
 
 # Java 註解語法 Sample Code
@@ -190,4 +190,4 @@ private String fundType;
 
 # 相關連結
 
-- [程式碼註解規範說明文件.gist](https://gist.github.com/wanyutang/cf8a0d4ac1ed67e50649650b7f3121b7)
+- [[程式碼註解規範說明文件]] [程式碼註解規範說明文件.md | Gist](https://gist.github.com/wanyutang/cf8a0d4ac1ed67e50649650b7f3121b7)
