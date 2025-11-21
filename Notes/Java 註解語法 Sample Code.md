@@ -1,19 +1,20 @@
 ---
-status: in-progress
+status: done
 priority: normal
 scheduled: 2025-11-21T00:00:00.000Z
 dateCreated: 2025-11-21T07:14:03.355Z
-dateModified: 2025-11-21T07:14:03.355Z
+dateModified: 2025-11-21T17:05:47.802+08:00
 tags:
   - task
 gists:
   - id: 512709032e5aae47b7409b7d049272b0
-    url: 'https://gist.github.com/wanyutang/512709032e5aae47b7409b7d049272b0'
-    createdAt: '2025-11-21T07:23:31Z'
-    updatedAt: '2025-11-21T07:23:48Z'
+    url: https://gist.github.com/wanyutang/512709032e5aae47b7409b7d049272b0
+    createdAt: 2025-11-21T07:23:31Z
+    updatedAt: 2025-11-21T07:23:48Z
     filename: winnygist.labs.Java 註解語法 Sample Code.md
     isPublic: true
-    baseUrl: 'https://api.github.com'
+    baseUrl: https://api.github.com
+completedDate: 2025-11-21
 ---
 
 # Java 註解語法 Sample Code
