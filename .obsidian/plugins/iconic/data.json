@@ -1,0 +1,146 @@
+{
+  "biggerIcons": "mobile",
+  "clickableIcons": "desktop",
+  "showAllFileIcons": false,
+  "showAllFolderIcons": false,
+  "minimalFolderIcons": true,
+  "showMarkdownTabIcons": true,
+  "showTitleIcons": true,
+  "showTagPillIcons": true,
+  "showMenuActions": true,
+  "showSuggestionIcons": true,
+  "showQuickSwitcherIcons": true,
+  "showMoveFileIcons": true,
+  "showItemName": "desktop",
+  "biggerSearchResults": "mobile",
+  "maxSearchResults": 50,
+  "colorPicker1": "list",
+  "colorPicker2": "rgb",
+  "uncolorHover": false,
+  "uncolorDrag": false,
+  "uncolorSelect": false,
+  "uncolorQuick": false,
+  "rememberDeletedItems": false,
+  "dialogState": {
+    "iconMode": true,
+    "emojiMode": false,
+    "rulePage": "file"
+  },
+  "appIcons": {},
+  "tabIcons": {},
+  "fileIcons": {
+    "Clip": {
+      "icon": "lucide-paperclip",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "purple"
+    },
+    "Contacts": {
+      "icon": "lucide-contact-round",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "pink"
+    },
+    "Daily": {
+      "icon": "lucide-sun",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "yellow"
+    },
+    "Notes": {
+      "icon": "lucide-file-pen",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "cyan"
+    },
+    "README.md": {
+      "icon": "lucide-home"
+    },
+    "References": {
+      "icon": "lucide-library-big",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "orange"
+    },
+    "Resources": {
+      "icon": "lucide-newspaper",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "blue"
+    },
+    "TaskNotes": {
+      "icon": "tasknotes-simple",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ],
+      "color": "green"
+    },
+    "TaskNotes/Views": {
+      "icon": "lucide-folder",
+      "unsynced": [
+        "0b12f54debe67beb",
+        "097c22a4ceb5fc85"
+      ]
+    },
+    "Templates": {
+      "icon": "lucide-layout-template",
+      "unsynced": [
+        "097c22a4ceb5fc85"
+      ]
+    }
+  },
+  "bookmarkIcons": {},
+  "tagIcons": {
+    "Tommy": {
+      "icon": "🌼"
+    },
+    "Fion": {
+      "icon": "🌷"
+    }
+  },
+  "propertyIcons": {},
+  "ribbonIcons": {},
+  "fileRules": [
+    {
+      "id": "0OYzj",
+      "name": "Canvas rule",
+      "match": "all",
+      "conditions": [
+        {
+          "source": "extension",
+          "operator": "contains",
+          "value": "CANVAS"
+        }
+      ],
+      "enabled": true,
+      "icon": "lucide-map"
+    },
+    {
+      "id": "7UiiS",
+      "name": "MD rule",
+      "match": "all",
+      "conditions": [
+        {
+          "source": "extension",
+          "operator": "contains",
+          "value": "md"
+        }
+      ],
+      "enabled": true
+    }
+  ],
+  "folderRules": []
+}
