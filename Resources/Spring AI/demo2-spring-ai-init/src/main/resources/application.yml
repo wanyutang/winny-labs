@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: demo
+
+  # Spring AI - Ollama 配置
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llama3.1:8b
