@@ -1,12 +1,11 @@
 ---
-status: done
+status: open
 priority: normal
 scheduled: 2025-11-29
 dateCreated: 2025-11-29T11:43:59.657+08:00
-dateModified: 2025-11-29T15:50:49.454+08:00
+dateModified: 2025-11-29T16:44:42.019+08:00
 tags:
   - task
-completedDate: 2025-11-29
 ---
 
 採由淺入深的分階段實作 - 先 Swagger + 本地模型呼叫，再引入 Spring AI、串流與記憶管理，每個階段搭配單元與整合測試，降低風險並確保可驗證性以下以 Obsidian 筆記格式整理
@@ -32,9 +31,9 @@ completedDate: 2025-11-29
 ## Tasks
 - [x] [[112901-建置 Swagger 初始 UI]] ✅ 2025-11-29
 - [x] [[112902-實作 LocalAIService 本機模型呼叫與單元測試]] ✅ 2025-11-29
-- [ ] 112903-引入 Spring AI 套件並建立基本呼叫樣板與測試
-- [ ] 112904-建置 AIConfig 屬性 and 測試覆蓋
-- [ ] 112905-實作非串流 Chat API 與對應單元 and 整合測試
+- [x] [[112903-引入 Spring AI 套件並建立基本呼叫樣板與測試]] ✅ 2025-11-29
+- [x] [[112904-建置 AIConfig 屬性 and 測試覆蓋]] ✅ 2025-11-29
+- [ ] [[112905-實作非串流 Chat API 與對應單元 and 整合測試]]
 - [ ] 112906-實作串流 Chat API SSE or WebFlux 與事件順序測試
 - [ ] 112907-建構 MemoryManager session-based 與隔離測試
 - [ ] 112908-新增多模型 Provider 選擇機制 config and fallback

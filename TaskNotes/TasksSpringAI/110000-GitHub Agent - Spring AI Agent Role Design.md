@@ -1,11 +1,12 @@
 ---
-status: in-progress
+status: done
 priority: normal
 scheduled: 2025-11-29
 dateCreated: 2025-11-29T12:00:26.447+08:00
-dateModified: 2025-11-29T12:00:26.447+08:00
+dateModified: 2025-11-29T16:38:29.723+08:00
 tags:
   - task
+completedDate: 2025-11-29
 ---
 
 - 此任務卡做為維護 github agent 的角色設計文件
