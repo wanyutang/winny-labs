@@ -22,893 +22,429 @@ tags:
 
 ---
 
-## 建置步驟規劃
+## Story 任務卡規劃
 
-### Phase 1: 依賴整合
-任務: 整合專案的 Maven 依賴
-- 將 Spring AI 相關依賴加入 `demo2-spring-ai-init/pom.xml`
-- 保留現有 SpringDoc OpenAPI 依賴
-- 使用 demo2-spring-ai-init 的版本管理
+### Phase 1: 依賴整合與環境驗證
 
-預期輸出: 
-- 更新後的 `pom.xml` 包含所有必要依賴
+CHECK 任務清單:
+- [ ] 檢查 `pom.xml` 中 Spring AI 依賴版本
+  - spring-ai-ollama: 1.1.0
+  - spring-ai-client-chat: 1.1.0
+  - spring-ai-advisors-vector-store: 1.0.0-M8
+- [ ] 檢查 SpringDoc OpenAPI 依賴: 2.5.0
+- [ ] 驗證 Spring Boot 版本: 3.5.5
+- [ ] 驗證 Java 版本: 21
+- [ ] 執行 `mvn clean compile` 確認無編譯錯誤
+- [ ] 記錄與 Spring-AI 專案的版本差異
+
+預期結果:
+- 依賴齊全，無需修改 `pom.xml`
+- 編譯成功
+- 版本差異文件記錄
 
 ---
 
-### Phase 2: 配置檔整合
-任務: 整合 `application.yml` 配置
-- 整合 Ollama 服務配置（base-url, model）
-- 保留原 demo2-spring-ai-init yaml 相關配置
+### Phase 2: 配置檔整合與策略決策
 
-預期輸出: 
-- demo2-spring-ai-init 統一的配置檔，包含 Spring AI 相關設定
+CHECK 任務清單:
+- [ ] 檢查 `demo2-spring-ai-init/src/main/resources/application.yml` 的 Spring AI 配置
+  ```yaml
+  spring:
+    ai:
+      ollama:
+        base-url: http://localhost:11434
+        chat:
+          model: llama3.1:8b
+  ```
+- [ ] 決策點: AiConfig.java 處理策略
+  
+  策略 A (推薦): 完全使用 Spring Boot 自動配置
+  - 不複製 `AiConfig.java` 到 demo2
+  - 僅依賴 `application.yml` 配置
+  - Spring AI 會自動建立 `OllamaChatModel` Bean
+  - 優點: 簡潔、符合 Spring Boot 最佳實踐
+  - 檢查方式: 建立測試類別注入 `OllamaChatModel` 驗證
+  
+  策略 B: 保留 AiConfig.java 並從 YAML 讀取參數
+  - 複製並修改 `AiConfig.java`
+  - 使用 `@Value` 或 `@ConfigurationProperties` 注入參數
+  - 優點: 可自訂 RestClient、Retry 策略等進階配置
+  - 適用: 需要更多客製化場景
+  
+- [ ] 執行決策: 根據專案需求選擇策略 A 或 B
+- [ ] 建立測試驗證 `OllamaChatModel` 可正常注入
+  ```java
+  @SpringBootTest
+  class ConfigTest {
+      @Autowired
+      private OllamaChatModel chatModel;
+      
+      @Test
+      void testChatModelInjection() {
+          assertNotNull(chatModel);
+      }
+  }
+  ```
+
+預期結果:
+`application.yml` 包含完整 AI 配置
+`OllamaChatModel` 可正常自動注入
+配置策略文件記錄（選擇了哪種策略及原因）
 
 ---
 
 ### Phase 3: Service 層建置
-任務: 建置 `OllamaService`，符合目標專案架構
-- 保留核心邏輯和串流功能
-- 加入錯誤處理機制
-- 編寫 Service 單元測試
 
-參考來源預: 
-- `Spring-AI/.../OllamaService.java`
-- `Spring-AI/.../AiConfig.java`
+CHECK 任務清單:
+- [ ] 檢查 `Spring-AI/.../OllamaService.java` 原始實作
+- [ ] 檢查 demo2 專案的 Service 層命名規範
+- [ ] 決策點: 確認 Service 方法簽名
+  ```java
+  // 一次性問答
+  public String ask(String question) throws IllegalArgumentException, RuntimeException
+  
+  // 串流問答
+  public Flux<String> stream(String question)
+  ```
 
-預期輸出: 
-- `com.systemweb.swagger.service.OllamaService`（新檔案）
-- `OllamaServiceTest.java`（單元測試）
+開發任務:
+- [ ] 建立 `com.systemweb.swagger.service.OllamaService`
+  - 注入 `OllamaChatModel`（自動注入或從 Config）
+  - 實作 `ask(String question)` 方法
+    - 輸入驗證（null、空字串、純空白）
+    - 錯誤處理（try-catch）
+    - 日誌記錄（@Slf4j）
+  - 實作 `stream(String question)` 方法
+    - 返回 `Flux<String>` 串流
+    - 錯誤處理（onErrorResume）
 
-測試涵蓋範圍:
-- 正常問答流程
-- 空字串或 null 輸入
-- Ollama 服務連線異常處理
+測試任務:
+- [ ] 建立 `OllamaServiceTest.java`（最少 6 個測試案例）
+  1. `testAsk_正常問答`
+  2. `testAsk_空字串輸入`
+  3. `testAsk_null輸入`
+  4. `testAsk_純空白輸入`
+  5. `testAsk_服務異常_應拋出RuntimeException`
+  6. `testStream_空字串輸入_應返回Error`
+  7. `testAsk_超長輸入` (可選)
+  8. `testStream_正常串流` (可選，需整合測試)
+- [ ] 執行測試，確保覆蓋率 ≥ 80%
+- [ ] 檢查無 SonarLint/CheckStyle 警告
 
----
-
-### Phase 4: Controller 層建置
-任務: 整合 `OllamaController`，整合標準回應模型
-- 支援一次性問答與串流兩種模式
-
-參考來源: 
-- `Spring-AI/.../OllamaController.java`
-- `demo2-spring-ai-init/.../BaseController.java`
-- `demo2-spring-ai-init/.../BaseResponse.java`
-
-預期輸出: 
-- `com.systemweb.swagger.controller.OllamaController`（新檔案）
-- `OllamaControllerTest.java`（整合測試）
-
-測試案例:
-```java
-POST /api/ollama/ask
-Request: {"question": "台灣在哪裡？"}
-Response: {"success": true, "data": "台灣是位於東亞的島嶼...", "message": null}
-
-GET /api/ollama/stream?question=台灣在哪裡
-Response: text/event-stream (Server-Sent Events)
-```
-
----
-
-## 📊 專案架構分析與對比
-
-### Spring-AI 原始專案架構
-```
-Spring-AI/
-├── pom.xml (Spring Boot 4.0.0, Java 17)
-│   └── Dependencies:
-│       ├── spring-boot-starter-webmvc
-│       ├── spring-ai-ollama (1.1.0)
-│       ├── spring-ai-client-chat (1.1.0)
-│       └── spring-ai-advisors-vector-store (1.0.0-M8)
-│
-├── src/main/java/com/example/demo/
-│   ├── SpringAiApplication.java
-│   ├── config/
-│   │   └── AiConfig.java
-│   │       ├── @Bean OllamaApi (手動建立)
-│   │       ├── @Bean OllamaChatModel (手動建立)
-│   │       └── 硬編碼配置: baseUrl, model
-│   ├── controller/
-│   │   └── OllamaController.java
-│   │       ├── GET /ollama/ask?q=xxx (返回 String)
-│   │       ├── GET /ollama/stream?q=xxx (返回 Flux<String>)
-│   │       └── 無 Swagger 註解
-│   └── service/
-│       └── OllamaService.java
-│           ├── ask(String q): String
-│           └── 簡單封裝 chatModel.call()
-│
-└── src/main/resources/
-    ├── application.properties
-    │   └── 配置被註解掉，未使用 Spring Boot 自動配置
-    └── static/
-        ├── chat.html (前端介面)
-        ├── css/chat.css
-        └── js/chat.js
-            ├── ask() - 呼叫 /ollama/ask
-            └── stream() - 未實作 EventSource
-```
-
-### demo2-spring-ai-init 目標專案架構
-```
-demo2-spring-ai-init/
-├── pom.xml (Spring Boot 3.5.5, Java 21)
-│   └── Dependencies:
-│       ├── spring-boot-starter-web
-│       ├── springdoc-openapi-starter-webmvc-ui (2.5.0)
-│       ├── spring-ai-ollama (1.1.0) ✅ 已包含
-│       ├── spring-ai-client-chat (1.1.0) ✅ 已包含
-│       └── spring-ai-advisors-vector-store (1.0.0-M8) ✅ 已包含
-│
-├── src/main/java/com/systemweb/swagger/
-│   ├── DemoApplication.java
-│   ├── controller/
-│   │   ├── BaseController.java
-│   │   │   ├── success(message, status): BaseResponse
-│   │   │   └── fail(message): BaseResponse
-│   │   └── StatusController.java (範例)
-│   │       └── 使用 @Tag, @Operation, @RequestBody 等 Swagger 註解
-│   ├── model/
-│   │   ├── BaseRequest.java (基礎請求模型)
-│   │   ├── BaseResponse.java (標準回應模型)
-│   │   │   ├── code: String
-│   │   │   ├── message: String
-│   │   │   ├── success: boolean
-│   │   │   └── status: String
-│   │   ├── RequestBody.java
-│   │   ├── ResponseBody.java
-│   │   └── StatusReq.java (範例)
-│   ├── constant/
-│   │   └── MessageConst.java (訊息常數定義)
-│   └── validator/
-│       └── EnumNamePatternValidator.java
-│
-└── src/main/resources/
-    └── application.yml
-        └── spring.ai.ollama 配置 ✅ 已正確配置
-```
+預期交付:
+`service/OllamaService.java` (含完整錯誤處理和日誌)
+`test/.../OllamaServiceTest.java` (6+ 測試案例)
+測試全數通過
+測試覆蓋率報告
 
 ---
 
-## 🔍 關鍵差異分析
+### Phase 4: Controller 層建置與 Swagger 整合
 
-### 1. **Spring Boot 版本差異**
-| 項目 | Spring-AI | demo2-spring-ai-init | 影響 |
-|------|-----------|----------------------|------|
-| Spring Boot | 4.0.0 | 3.5.5 | API 可能有差異 |
-| Java 版本 | 17 | 21 | 需確認語法相容性 |
-| Web Starter | webmvc | web | 功能相同 |
+CHECK 任務清單:
+- [ ] 檢查 `Spring-AI/.../OllamaController.java` 原始實作
+- [ ] 檢查 `demo2/.../BaseController.java` 的方法
+  - `success(message, status)` 方法簽名
+  - `fail(message)` 方法簽名
+- [ ] 檢查 `BaseResponse` 結構
+  ```java
+  // 實際結構已確認:
+  - String code
+  - String message      // ← AI 回答放這裡
+  - boolean success
+  - String status
+  ```
+- [ ] 決策點: API 回應格式策略
+  
+  已確認: `BaseResponse` 沒有 `data` 欄位
+  
+  策略 (確定):
+  ```java
+  // 成功時
+  BaseResponse response = success(aiAnswer, null);
+  // 返回: {"success": true, "code": "T0000", "message": "AI回答內容", "status": null}
+  
+  // 失敗時
+  BaseResponse response = fail("錯誤訊息");
+  // 返回: {"success": false, "code": "E0001", "message": "錯誤訊息", "status": null}
+  ```
+  
+- [ ] 決策點: 請求模型位置與繼承
+  - 檔名: `OllamaRequest.java` 還是 `AskRequest.java`？
+  - 位置: `model/` 目錄
+  - 是否繼承 `BaseRequest`？
+  - 是否加入 `@NotBlank` 驗證？
 
-### 2. **配置方式差異**
-| 項目 | Spring-AI | demo2-spring-ai-init | 移植策略 |
-|------|-----------|----------------------|----------|
-| 配置方式 | 手動 @Bean + 硬編碼 | application.yml | **移除 AiConfig.java**，使用 Spring Boot 自動配置 |
-| OllamaApi | 手動建立 | 自動注入 | 刪除手動建立邏輯 |
-| OllamaChatModel | 手動建立 | 自動注入 | 直接注入使用 |
-| 配置檔 | properties (未使用) | yml (已配置) | 無需變更 |
+開發任務:
+- [ ] 建立請求模型 `model/OllamaRequest.java` (或 `AskRequest.java`)
+  ```java
+  @Schema(description = "AI 問答請求")
+  public class OllamaRequest {
+      @NotBlank(message = "問題不能為空")
+      @Schema(description = "使用者問題", example = "台灣在哪裡？")
+      private String question;
+  }
+  ```
+- [ ] 建立 `controller/OllamaController.java`
+  - 繼承 `BaseController`
+  - 注入 `OllamaService`
+  - 實作 `POST /api/ollama/ask`
+    - 接收 `@RequestBody OllamaRequest`
+    - 返回 `BaseResponse` (message 欄位包含 AI 回答)
+    - try-catch 錯誤處理
+  - 實作 `GET /api/ollama/stream`
+    - 接收 `@RequestParam String question`
+    - 返回 `Flux<String>` (Content-Type: text/event-stream)
+  - 完整 Swagger 註解:
+    - `@Tag` (Controller 類別)
+    - `@Operation` (每個端點)
+    - `@ApiResponse` (成功/失敗範例)
+    - `@Parameter` (參數說明)
+    - `@ExampleObject` (JSON 範例)
 
-### 3. **API 回應格式差異**
-| 項目 | Spring-AI | demo2-spring-ai-init | 重構方案 |
-|------|-----------|----------------------|----------|
-| 一次性問答 | `String` | `BaseResponse<String>` | 包裝成 `BaseResponse` |
-| 串流問答 | `Flux<String>` | 保持 `Flux<String>` | **不變更**，SSE 需原始串流 |
-| 錯誤處理 | 無 | try-catch + fail() | 新增異常處理 |
-| HTTP Status | 200 (總是) | 200/400/500 | 維持 200，用 success 欄位 |
+測試任務:
+- [ ] 建立 `OllamaControllerTest.java` (4+ 整合測試)
+  1. `testAsk_正常問答_返回BaseResponse`
+  2. `testAsk_空字串問題_返回失敗BaseResponse`
+  3. `testAsk_服務異常_返回失敗BaseResponse`
+  4. `testStream_正常串流_返回SSE`
+- [ ] 啟動專案，開啟 Swagger UI 驗證
+  - URL: http://localhost:8080/swagger-ui.html
+  - 檢查 API 文件完整性
+  - 測試 `/api/ollama/ask` 端點
+  - 測試 `/api/ollama/stream` 端點（需手動測試 SSE）
 
-### 4. **Swagger 文件差異**
-| 項目 | Spring-AI | demo2-spring-ai-init | 需新增 |
-|------|-----------|----------------------|--------|
-| Swagger UI | ❌ 無 | ✅ 有 (springdoc) | 保持 |
-| @Tag | ❌ | ✅ | 新增類別標籤 |
-| @Operation | ❌ | ✅ | 新增方法說明 |
-| @Schema | ❌ | ✅ | 新增模型說明 |
-| @Parameter | ❌ | ❌ | 新增參數說明 |
-| @ApiResponse | ❌ | ✅ | 新增回應範例 |
-
-### 5. **前端整合差異**
-| 項目 | Spring-AI | demo2-spring-ai-init | 處理方式 |
-|------|-----------|----------------------|----------|
-| 靜態頁面 | chat.html + JS | 無 | **Phase 5 新增** |
-| API URL | /ollama/ask | /api/ollama/ask | 更新前端 URL |
-| 回應格式 | 純字串 | BaseResponse JSON | 更新前端解析邏輯 |
-| stream() | 未實作 | 需實作 | 完成 EventSource |
-
----
-
-## 📝 詳細技術規格補充
-
-### Phase 1: 依賴整合（詳細版）
-
-**任務細項:**
-1. ✅ 驗證 Spring AI 依賴已存在於 demo2-spring-ai-init
-   - spring-ai-ollama: 1.1.0
-   - spring-ai-client-chat: 1.1.0
-   - spring-ai-advisors-vector-store: 1.0.0-M8
-2. ✅ 驗證 SpringDoc OpenAPI 依賴: 2.5.0
-3. ⚠️ 檢查 Spring Boot 版本相容性 (4.0.0 → 3.5.5)
-
-**驗證檢查清單:**
-- [ ] `mvn clean compile` 無錯誤
-- [ ] 依賴衝突解決（如有）
-- [ ] IDE 無紅線錯誤
-
-**預期結果:**
-- 無需修改 `pom.xml`（依賴已齊全）
-- 文件記錄版本差異注意事項
-
----
-
-### Phase 2: 配置檔整合（詳細版）
-
-**任務細項:**
-1. ✅ 保留現有 `application.yml` 的 Spring AI 配置:
-   ```yaml
-   spring:
-     ai:
-       ollama:
-         base-url: http://localhost:11434
-         chat:
-           model: llama3.1:8b
-   ```
-2. ❌ **移除** `Spring-AI/config/AiConfig.java`（改用自動配置）
-3. ✅ 驗證 Spring Boot 自動配置生效
-
-**配置對比:**
-
-**原始手動配置 (需移除):**
-```java
-@Configuration
-public class AiConfig {
-    private String ollamaApiURL = "http://localhost:11434";
-    private String defaultModel = "llama3.1:8b";
-    
-    @Bean
-    public OllamaApi ollamaApi() {
-        return OllamaApi.builder().baseUrl(ollamaApiURL).build();
-    }
-    
-    @Bean
-    public OllamaChatModel chatModel(OllamaApi ollamaApi) {
-        return OllamaChatModel.builder()
-            .ollamaApi(ollamaApi)
-            .defaultOptions(OllamaChatOptions.builder().model(defaultModel).build())
-            .build();
-    }
-}
-```
-
-**新版自動配置 (application.yml):**
-```yaml
-spring:
-  ai:
-    ollama:
-      base-url: http://localhost:11434
-      chat:
-        model: llama3.1:8b
-        options:
-          temperature: 0.7  # 可選：控制回答隨機性
-          top-p: 0.9        # 可選：控制回答多樣性
-```
-
-**驗證方法:**
-```java
-@Autowired
-private OllamaChatModel chatModel; // 直接注入測試
-```
-
-**預期結果:**
-- 無 `config/AiConfig.java` 檔案
-- `application.yml` 包含完整 AI 配置
-- OllamaChatModel 可正常注入
+預期交付:
+`model/OllamaRequest.java`
+`controller/OllamaController.java` (完整 Swagger 註解)
+`test/.../OllamaControllerTest.java` (4+ 測試)
+Swagger UI 正常顯示且可互動測試
+Swagger UI 截圖存檔
 
 ---
 
-### Phase 3: Service 層建置（詳細版）
+### Phase 5: 前端整合（待規劃）
 
-**檔案位置:**
-- 來源: `Spring-AI/.../OllamaService.java`
-- 目標: `demo2-spring-ai-init/src/main/java/com/systemweb/swagger/service/OllamaService.java`
+CHECK 任務清單:
+- [ ] 決策點: 前端技術選型
+  
+  選項 A: 快速驗證 - 靜態頁面 (推薦優先)
+  - 複製 `Spring-AI/static/` 到 `demo2-spring-ai-init/static/`
+  - 更新 `chat.js` API 呼叫邏輯
+  - 優點: 快速驗證功能，最小變更
+  - 適合: POC、內部測試
+  - 工作量: 約 2-4 小時
+  
+  選項 B: 現代前端框架
+  - 使用 React/Vue + Vite 建立獨立前端專案
+  - 優點: 現代化、可擴展、元件化
+  - 適合: 正式產品、長期維護
+  - 工作量: 約 2-5 天
+  
+  選項 C: 僅提供 API
+  - 不提供前端，僅透過 Swagger UI 測試
+  - 優點: 後端專注，前後端分離
+  - 適合: API 服務、微服務架構
+  - 工作量: 0（本階段跳過）
 
-**原始程式碼:**
-```java
-@Service
-public class OllamaService {
-    private final OllamaChatModel chatModel;
-    
-    public OllamaService(OllamaChatModel chatModel) {
-        this.chatModel = chatModel;
-    }
-    
-    public String ask(String q) {
-        return chatModel.call(q);
-    }
-}
-```
-
-**重構後程式碼:**
-```java
-package com.systemweb.swagger.service;
-
-import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-@Service
-public class OllamaService {
-    
-    private final OllamaChatModel chatModel;
-    
-    public OllamaService(OllamaChatModel chatModel) {
-        this.chatModel = chatModel;
-    }
-    
-    /**
-     * 一次性問答
-     * @param question 使用者問題
-     * @return AI 回答
-     * @throws IllegalArgumentException 當問題為空時
-     * @throws RuntimeException 當 Ollama 服務異常時
-     */
-    public String ask(String question) {
-        log.info("收到問題: {}", question);
-        
-        if (question == null || question.trim().isEmpty()) {
-            throw new IllegalArgumentException("問題不能為空");
-        }
-        
-        try {
-            String answer = chatModel.call(question);
-            log.info("AI 回答: {}", answer);
-            return answer;
-        } catch (Exception e) {
-            log.error("Ollama 服務呼叫失敗", e);
-            throw new RuntimeException("AI 服務暫時無法使用，請稍後再試", e);
-        }
-    }
-    
-    /**
-     * 串流問答
-     * @param question 使用者問題
-     * @return 串流回答
-     * @throws IllegalArgumentException 當問題為空時
-     */
-    public Flux<String> stream(String question) {
-        log.info("收到串流問題: {}", question);
-        
-        if (question == null || question.trim().isEmpty()) {
-            return Flux.error(new IllegalArgumentException("問題不能為空"));
-        }
-        
-        try {
-            return chatModel.stream(new Prompt(question))
-                .map(chunk -> chunk.getResult().getOutput().getText())
-                .doOnError(e -> log.error("串流處理失敗", e))
-                .onErrorResume(e -> Flux.just("串流處理發生錯誤，請重試"));
-        } catch (Exception e) {
-            log.error("串流初始化失敗", e);
-            return Flux.error(new RuntimeException("串流服務無法啟動", e));
-        }
-    }
-}
-```
-
-**測試案例 (OllamaServiceTest.java):**
-```java
-package com.systemweb.swagger.service;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.model.ChatResponse;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(MockitoExtension.class)
-class OllamaServiceTest {
-    
-    @Mock
-    private OllamaChatModel chatModel;
-    
-    @InjectMocks
-    private OllamaService ollamaService;
-    
-    @Test
-    void testAsk_正常問答() {
-        // Given
-        String question = "台灣在哪裡？";
-        String expectedAnswer = "台灣是位於東亞的島嶼國家";
-        when(chatModel.call(question)).thenReturn(expectedAnswer);
-        
-        // When
-        String answer = ollamaService.ask(question);
-        
-        // Then
-        assertEquals(expectedAnswer, answer);
-        verify(chatModel, times(1)).call(question);
-    }
-    
-    @Test
-    void testAsk_空字串輸入() {
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () -> ollamaService.ask(""));
-        assertThrows(IllegalArgumentException.class, () -> ollamaService.ask("   "));
-        verify(chatModel, never()).call(anyString());
-    }
-    
-    @Test
-    void testAsk_null輸入() {
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () -> ollamaService.ask(null));
-        verify(chatModel, never()).call(anyString());
-    }
-    
-    @Test
-    void testAsk_服務異常() {
-        // Given
-        when(chatModel.call(anyString())).thenThrow(new RuntimeException("連線失敗"));
-        
-        // When & Then
-        RuntimeException exception = assertThrows(RuntimeException.class, 
-            () -> ollamaService.ask("測試問題"));
-        assertTrue(exception.getMessage().contains("AI 服務暫時無法使用"));
-    }
-    
-    @Test
-    void testStream_正常串流() {
-        // Given (需要更複雜的 Mock，可選實作)
-        // 此測試可能需要整合測試環境
-    }
-    
-    @Test
-    void testStream_空字串輸入() {
-        // When
-        Flux<String> result = ollamaService.stream("");
-        
-        // Then
-        StepVerifier.create(result)
-            .expectError(IllegalArgumentException.class)
-            .verify();
-    }
-}
-```
-
-**預期輸出:**
-- ✅ `OllamaService.java` (含完整錯誤處理)
-- ✅ `OllamaServiceTest.java` (6+ 測試案例)
-- ✅ 測試覆蓋率 > 80%
+- [ ] 執行決策: 根據專案需求選擇選項 A、B 或 C
 
 ---
 
-### Phase 4: Controller 層建置（詳細版）
+#### 如選擇 選項 A: 靜態頁面
 
-**檔案位置:**
-- 來源: `Spring-AI/.../OllamaController.java`
-- 目標: `demo2-spring-ai-init/src/main/java/com/systemweb/swagger/controller/OllamaController.java`
+CHECK 子任務:
+- [ ] 檢查 `Spring-AI/static/chat.html` 結構
+- [ ] 檢查 `Spring-AI/static/js/chat.js` API 呼叫邏輯
+- [ ] 確認 demo2 專案的靜態資源路徑配置
 
-**重構後完整程式碼:**
-```java
-package com.systemweb.swagger.controller;
+開發任務:
+- [ ] 複製檔案到 `demo2-spring-ai-init/src/main/resources/static/`
+  - `chat.html`
+  - `css/chat.css`
+  - `js/chat.js`
+- [ ] 更新 `chat.js` 的 API 呼叫
+  - 一次性問答:
+    - 改為 `POST /api/ollama/ask`
+    - 請求 Body: `{"question": "..."}`
+    - 解析 `BaseResponse` JSON: `data.message`
+  - 串流問答:
+    - 改為 `GET /api/ollama/stream?question=...`
+    - 實作 `EventSource` 串流接收
+    - 加入錯誤處理和連線管理
 
-import com.systemweb.swagger.model.BaseResponse;
-import com.systemweb.swagger.service.OllamaService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
+測試任務:
+- [ ] 啟動專案，開啟前端頁面
+  - URL: http://localhost:8080/chat.html
+- [ ] 手動測試一次性問答
+  - 輸入問題，檢查回應顯示
+  - 測試空輸入錯誤提示
+- [ ] 手動測試串流問答
+  - 檢查逐字顯示效果
+  - 測試串流中斷處理
+- [ ] 瀏覽器 Console 檢查無 JavaScript 錯誤
 
-@Slf4j
-@Tag(name = "Ollama AI Chat API", description = "基於 Ollama 的 AI 聊天服務")
-@RestController
-@RequestMapping("/api/ollama")
-public class OllamaController extends BaseController {
-    
-    private final OllamaService ollamaService;
-    
-    public OllamaController(OllamaService ollamaService) {
-        this.ollamaService = ollamaService;
-    }
-    
-    @Operation(
-        summary = "一次性 AI 問答",
-        description = "向 Ollama AI 提問並等待完整回答。適合短問答或需要完整回應的場景。"
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "成功取得 AI 回答",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = BaseResponse.class),
-                examples = @ExampleObject(
-                    name = "成功範例",
-                    value = "{\"success\":true,\"code\":\"T0000\",\"message\":\"台灣是位於東亞的島嶼國家，位於太平洋西岸...\",\"status\":null}"
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = "請求參數錯誤",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = BaseResponse.class),
-                examples = @ExampleObject(
-                    name = "錯誤範例",
-                    value = "{\"success\":false,\"code\":\"E0001\",\"message\":\"問題不能為空\",\"status\":null}"
-                )
-            )
-        )
-    })
-    @PostMapping("/ask")
-    public BaseResponse ask(
-        @Parameter(description = "使用者問題", required = true, example = "台灣在哪裡？")
-        @RequestBody AskRequest request
-    ) {
-        try {
-            log.info("收到問答請求: {}", request.getQuestion());
-            String answer = ollamaService.ask(request.getQuestion());
-            BaseResponse response = success(answer, null);
-            return response;
-        } catch (IllegalArgumentException e) {
-            log.warn("參數驗證失敗: {}", e.getMessage());
-            return fail(e.getMessage());
-        } catch (Exception e) {
-            log.error("AI 問答失敗", e);
-            return fail("AI 服務暫時無法使用，請稍後再試");
-        }
-    }
-    
-    @Operation(
-        summary = "串流 AI 問答",
-        description = "向 Ollama AI 提問並即時接收串流回答。使用 Server-Sent Events (SSE) 技術，適合長回答或即時互動場景。"
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "成功建立串流連線",
-            content = @Content(
-                mediaType = "text/event-stream",
-                schema = @Schema(type = "string"),
-                examples = @ExampleObject(
-                    name = "串流範例",
-                    value = "data: 台灣\ndata: 是\ndata: 位於\ndata: 東亞..."
-                )
-            )
-        )
-    })
-    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> stream(
-        @Parameter(description = "使用者問題", required = true, example = "台灣在哪裡？")
-        @RequestParam String question
-    ) {
-        log.info("收到串流請求: {}", question);
-        return ollamaService.stream(question);
-    }
-}
-
-// 請求模型
-@Schema(description = "AI 問答請求")
-class AskRequest {
-    @Schema(description = "使用者問題", example = "台灣在哪裡？", required = true)
-    private String question;
-    
-    public String getQuestion() { return question; }
-    public void setQuestion(String question) { this.question = question; }
-}
-```
-
-**測試案例 (OllamaControllerTest.java):**
-```java
-package com.systemweb.swagger.controller;
-
-import com.systemweb.swagger.model.BaseResponse;
-import com.systemweb.swagger.service.OllamaService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import reactor.core.publisher.Flux;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
-
-@WebMvcTest(OllamaController.class)
-class OllamaControllerTest {
-    
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @MockBean
-    private OllamaService ollamaService;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
-    
-    @Test
-    void testAsk_正常問答() throws Exception {
-        // Given
-        String question = "台灣在哪裡？";
-        String answer = "台灣是位於東亞的島嶼國家";
-        when(ollamaService.ask(question)).thenReturn(answer);
-        
-        String requestBody = "{\"question\":\"" + question + "\"}";
-        
-        // When & Then
-        mockMvc.perform(post("/api/ollama/ask")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.code").value("T0000"))
-            .andExpect(jsonPath("$.message").value(answer));
-        
-        verify(ollamaService, times(1)).ask(question);
-    }
-    
-    @Test
-    void testAsk_空字串問題() throws Exception {
-        // Given
-        when(ollamaService.ask(anyString()))
-            .thenThrow(new IllegalArgumentException("問題不能為空"));
-        
-        String requestBody = "{\"question\":\"\"}";
-        
-        // When & Then
-        mockMvc.perform(post("/api/ollama/ask")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.code").value("E0001"))
-            .andExpect(jsonPath("$.message").value(containsString("空")));
-    }
-    
-    @Test
-    void testAsk_服務異常() throws Exception {
-        // Given
-        when(ollamaService.ask(anyString()))
-            .thenThrow(new RuntimeException("連線失敗"));
-        
-        String requestBody = "{\"question\":\"測試\"}";
-        
-        // When & Then
-        mockMvc.perform(post("/api/ollama/ask")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.message").value(containsString("無法使用")));
-    }
-    
-    @Test
-    void testStream_正常串流() throws Exception {
-        // Given
-        Flux<String> mockFlux = Flux.just("台", "灣", "是", "...");
-        when(ollamaService.stream(anyString())).thenReturn(mockFlux);
-        
-        // When & Then
-        mockMvc.perform(get("/api/ollama/stream")
-                .param("question", "台灣在哪裡？"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM_VALUE));
-    }
-}
-```
-
-**預期輸出:**
-- ✅ `OllamaController.java` (完整 Swagger 註解)
-- ✅ `AskRequest.java` (請求模型)
-- ✅ `OllamaControllerTest.java` (4+ 整合測試)
-- ✅ Swagger UI 可正常顯示 API 文件
+預期交付:
+`static/chat.html` + `chat.css` + `chat.js`
+前端與後端 API 完全整合
+一次性問答功能正常
+串流問答功能正常
+📸 前端操作截圖/錄影
 
 ---
 
-### Phase 5: 前端整合（新增階段）
+#### 如選擇 選項 B 或 C
 
-**任務:** 移植並更新前端聊天介面
+- 📝 建立獨立的前端開發計劃文件
+- 📝 定義前後端 API 契約
+- ⏸️ 本 Epic 不包含此部分開發
 
-**檔案清單:**
-- 來源: `Spring-AI/src/main/resources/static/`
-- 目標: `demo2-spring-ai-init/src/main/resources/static/`
+目前狀態: ⏸️ Phase 5 待決策後再執行
 
-**需要更新的內容:**
+---
 
-1. **chat.html** (無需大改)
-2. **chat.css** (無需大改)
-3. **chat.js** (需大幅修改)
+## 測試計劃與驗收標準
 
-**重構後 chat.js:**
-```javascript
-const chatBox = document.getElementById("chat-box");
-const questionInput = document.getElementById("question");
+### Phase 測試檢查表
 
-// 一次性回答: 呼叫 /api/ollama/ask (注意: 改用 POST + BaseResponse)
-function ask() {
-    const question = questionInput.value.trim();
-    
-    if(!question) {
-        alert("請輸入問題");
-        return;
-    }
-    
-    chatBox.innerText += `You: ${question}\n`;
-    questionInput.value = '';
-    
-    fetch('http://localhost:8080/api/ollama/ask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question: question })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            chatBox.innerText += `AI: ${data.message}\n\n`;
-        } else {
-            chatBox.innerText += `錯誤: ${data.message}\n\n`;
-        }
-        chatBox.scrollTop = chatBox.scrollHeight;
-    })
-    .catch(err => {
-        chatBox.innerText += "網路錯誤，請檢查連線\n\n";
-        console.error(err);
-    });
-}
+#### Phase 1 驗收標準
+- [ ] `mvn clean compile` 成功
+- [ ] 所有依賴正常解析
+- [ ] 📝 版本差異文件已記錄
 
-// 逐字回答: 呼叫 /api/ollama/stream
-function stream() {
-    const question = questionInput.value.trim();
-    
-    if(!question) {
-        alert("請輸入問題");
-        return;
-    }
-    
-    chatBox.innerText += `You: ${question}\n`;
-    chatBox.innerText += `AI: `;
-    questionInput.value = '';
-    
-    const eventSource = new EventSource(
-        `http://localhost:8080/api/ollama/stream?question=${encodeURIComponent(question)}`
-    );
-    
-    eventSource.onmessage = function(event) {
-        chatBox.innerText += event.data;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    };
-    
-    eventSource.onerror = function(err) {
-        console.error("EventSource 錯誤:", err);
-        chatBox.innerText += "\n[串流結束]\n\n";
-        eventSource.close();
-    };
-    
-    // 自動關閉連線 (避免資源洩漏)
-    setTimeout(() => {
-        if (eventSource.readyState !== EventSource.CLOSED) {
-            eventSource.close();
-            chatBox.innerText += "\n\n";
-        }
-    }, 60000); // 60秒後自動關閉
-}
-```
+#### Phase 2 驗收標準
+- [ ] 配置策略已選擇並記錄（A 或 B）
+- [ ] `OllamaChatModel` 可正常注入
+- [ ] 測試類別驗證通過
 
-**驗證清單:**
-- [ ] 前端可正常載入 (http://localhost:8080/chat.html)
+#### Phase 3 驗收標準
+- [ ] `OllamaService` 實作完成
+- [ ] 單元測試覆蓋率 ≥ 80%
+- [ ] 所有測試案例通過 (6+)
+- [ ] 無 Code Smell 警告
+
+#### Phase 4 驗收標準
+- [ ] `OllamaController` 實作完成
+- [ ] Swagger UI 正常顯示
+- [ ] 整合測試通過 (4+)
+- [ ] API 手動測試通過
+  - POST /api/ollama/ask (Swagger UI 測試)
+  - GET /api/ollama/stream (Postman/curl 測試)
+
+#### Phase 5 驗收標準（如執行）
+- [ ] 前端頁面正常載入
 - [ ] 一次性問答功能正常
 - [ ] 串流問答功能正常
-- [ ] 錯誤提示正確顯示
-- [ ] UI 互動流暢
-
-**預期輸出:**
-- ✅ 完整前端頁面 (HTML + CSS + JS)
-- ✅ 前端與後端 API 完全整合
-- ✅ EventSource 串流正常運作
+- [ ] 錯誤處理正確顯示
 
 ---
 
-## 🧪 整體測試計劃
+### 整合測試計劃
 
-### 單元測試覆蓋率目標
+前置條件檢查:
+- [ ] Ollama 服務已啟動: `ollama serve`
+- [ ] 模型已下載: `ollama pull llama3.1:8b`
+- [ ] demo2 專案已啟動: `mvn spring-boot:run`
+
+測試案例:
+
+1. Ollama 服務連線測試
+   ```bash
+   curl http://localhost:11434/api/tags
+   # 預期: 返回已安裝的模型列表
+   ```
+
+2. API 端到端測試 - 一次性問答
+   - Swagger UI 測試:
+     - 開啟: http://localhost:8080/swagger-ui.html
+     - 找到 `POST /api/ollama/ask`
+     - 輸入: `{"question": "台灣在哪裡？"}`
+     - 預期: `{"success": true, "message": "台灣是...", ...}`
+   
+   - Postman/curl 測試:
+     ```bash
+     curl -X POST http://localhost:8080/api/ollama/ask \
+       -H "Content-Type: application/json" \
+       -d '{"question":"台灣在哪裡？"}'
+     ```
+
+3. API 端到端測試 - 串流問答
+   ```bash
+   curl -N http://localhost:8080/api/ollama/stream?question=台灣在哪裡？
+   # 預期: 逐字返回 SSE 事件流
+   ```
+
+4. 錯誤處理測試
+   - 空問題: `{"question": ""}`
+   - Ollama 服務關閉情境
+   - 超長輸入（10000+ 字元）
+
+5. 效能測試（可選）
+   - 單次問答回應時間 < 5 秒
+   - 串流首字回應時間 < 1 秒
+   - 並發 10 請求無異常
+
+---
+
+### 測試覆蓋率目標
+
 - Service 層: ≥ 80%
 - Controller 層: ≥ 75%
-- 總體: ≥ 70%
+- 整體: ≥ 70%
 
-### 整合測試案例
-1. **Ollama 服務連線測試**
-   - 啟動 Ollama 本機服務
-   - 驗證 model 載入正常
-   
-2. **API 端到端測試**
-   - Swagger UI 測試 /api/ollama/ask
-   - Swagger UI 測試 /api/ollama/stream
-   - Postman 測試完整流程
-   
-3. **前端整合測試**
-   - 瀏覽器測試一次性問答
-   - 瀏覽器測試串流問答
-   - 測試錯誤處理流程
-
-### 效能測試
-- 單次問答回應時間 < 5 秒
-- 串流首字回應時間 < 1 秒
-- 並發 10 請求無異常
+生成測試報告:
+```bash
+mvn clean test jacoco:report
+# 報告位置: target/site/jacoco/index.html
+```
 
 ---
 
-## 📦 交付清單
+## 📦 交付清單與驗收
 
 ### 程式碼檔案
-- [ ] `OllamaService.java` + 測試
-- [ ] `OllamaController.java` + 測試
-- [ ] `AskRequest.java` (請求模型)
-- [ ] `chat.html` + `chat.css` + `chat.js`
-- [ ] 更新後的 `application.yml`
-- [ ] ~~AiConfig.java~~ (刪除)
+- [ ] Phase 2: `config/AiConfig.java` (依策略決定是否建立)
+- [ ] Phase 3: `service/OllamaService.java` + 完整錯誤處理
+- [ ] Phase 3: `test/.../OllamaServiceTest.java` (6+ 測試案例)
+- [ ] Phase 4: `model/OllamaRequest.java` (請求模型)
+- [ ] Phase 4: `controller/OllamaController.java` + 完整 Swagger 註解
+- [ ] Phase 4: `test/.../OllamaControllerTest.java` (4+ 整合測試)
+- [ ] Phase 5: `static/chat.html` + `chat.css` + `chat.js` (如執行)
 
-### 文件
+### 配置檔案
+- [ ] Phase 2: `application.yml` 已確認包含 Spring AI 配置
+- [ ] Phase 2: 配置策略決策記錄文件
+
+### 文件交付
 - [ ] API 文件 (Swagger UI 自動生成)
-- [ ] README.md (使用說明)
-- [ ] 測試報告 (覆蓋率報告)
+- [ ] 測試覆蓋率報告 (JaCoCo)
+- [ ] Phase 1 版本差異記錄
+- [ ] Phase 2 配置策略決策記錄
+- [ ] Phase 5 前端技術選型決策記錄（如執行）
+- [ ] README.md 使用說明更新
 
-### 驗證項目
+### 驗收截圖/錄影
+- [ ] Swagger UI 介面截圖
+- [ ] API 測試成功截圖 (Postman/curl)
+- [ ] 測試覆蓋率報告截圖
+- [ ] 前端操作錄影（如執行 Phase 5）
+
+### 最終檢查項目
 - [ ] 所有單元測試通過
 - [ ] 整合測試通過
-- [ ] Swagger UI 正常顯示
-- [ ] 前端功能正常
-- [ ] 程式碼無 Warning
+- [ ] Swagger UI 正常顯示且可互動
+- [ ] 程式碼無 Compile Error
+- [ ] 程式碼無 SonarLint/CheckStyle 警告
+- [ ] Git commit 訊息清晰（每個 Phase 獨立 commit）
+- [ ] README.md 已更新使用說明
 
 ---
 
-## ⚠️ 風險與注意事項
-
-### 技術風險
-1. **Spring Boot 版本差異 (4.0.0 → 3.5.5)**
-   - 可能的 API 不相容
-   - 建議: 優先測試核心功能
-   
-2. **Java 版本差異 (17 → 21)**
-   - 語法相容性問題
-   - 建議: 編譯階段驗證
-   
-3. **Ollama 服務依賴**
-   - 需本機啟動 Ollama
-   - 需下載 llama3.1:8b 模型
-   - 建議: 提供 Mock 測試模式
-
 ### 開發建議
-1. **優先順序**: Phase 1 → 2 → 3 → 4 → 5
-2. **測試驅動**: 每完成一個 Phase 立即測試
-3. **版本控制**: 每個 Phase 建立獨立 commit
-4. **文件同步**: 即時更新 README 與註解
+1. 優先順序: Phase 1 → 2 → 3 → 4 → 5
+2. 測試驅動: 每完成一個 Phase 立即測試
+3. 版本控制: 每個 Phase 建立獨立 commit
+4. 文件同步: 即時更新 README 與註解
 
 ---
 
@@ -929,19 +465,174 @@ function stream() {
 
 ---
 
-## 🎯 下一步行動建議
+## 🎯 執行順序與 Story 任務卡
 
 依照分析結果，建議按以下順序執行 Story 任務卡:
 
-1. **Story 1: 環境驗證與依賴確認** (Phase 1)
-2. **Story 2: 配置檔整合與自動配置遷移** (Phase 2)
-3. **Story 3: Service 層重構與單元測試** (Phase 3)
-4. **Story 4: Controller 層重構與 Swagger 整合** (Phase 4)
-5. **Story 5: 前端整合與端到端測試** (Phase 5)
-6. **Story 6: 整體測試與文件完善**
+### Story 1: 環境驗證與依賴確認 (Phase 1)
+估時: 0.5 - 1 小時  
+優先級: ⭐⭐⭐ 最高  
+AC (Acceptance Criteria):
+- Maven 編譯成功
+- 所有依賴正常解析
+- 版本差異文件已記錄
 
-每個 Story 應包含:
-- 明確的 AC (Acceptance Criteria)
-- 單元測試覆蓋率要求
-- 驗收測試腳本
-- 完成的定義 (Definition of Done)
+---
+
+### Story 2: 配置檔整合與策略決策 (Phase 2)
+估時: 1 - 2 小時  
+優先級: ⭐⭐⭐ 最高  
+前置依賴: Story 1 完成  
+AC (Acceptance Criteria):
+- 配置策略已選擇（A 或 B）並記錄原因
+- `OllamaChatModel` 可正常自動注入
+- 測試類別驗證通過
+
+關鍵決策點:
+- [ ] 決定是否需要 `AiConfig.java`（預設建議：不需要）
+
+---
+
+### Story 3: Service 層重構與單元測試 (Phase 3)
+估時: 3 - 4 小時  
+優先級: ⭐⭐⭐ 最高  
+前置依賴: Story 2 完成  
+AC (Acceptance Criteria):
+- `OllamaService` 實作完成，含錯誤處理
+- 單元測試覆蓋率 ≥ 80%
+- 所有測試案例通過 (6+)
+- 程式碼無 Code Smell
+
+DoD (Definition of Done):
+- [ ] Service 類別建立
+- [ ] ask() 和 stream() 方法實作
+- [ ] 6+ 單元測試全數通過
+- [ ] JaCoCo 報告覆蓋率 ≥ 80%
+
+---
+
+### Story 4: Controller 層重構與 Swagger 整合 (Phase 4)
+估時: 4 - 6 小時  
+優先級: ⭐⭐⭐ 最高  
+前置依賴: Story 3 完成  
+AC (Acceptance Criteria):
+- `OllamaController` 實作完成，含完整 Swagger 註解
+- `OllamaRequest` 請求模型建立
+- 整合測試通過 (4+)
+- Swagger UI 正常顯示且可互動測試
+- API 手動測試通過（Postman/curl）
+
+關鍵決策點:
+- [ ] 確認 BaseResponse 回應格式（message 欄位放 AI 回答）
+- [ ] 決定請求模型檔名（OllamaRequest vs AskRequest）
+
+DoD (Definition of Done):
+- [ ] Controller 類別建立
+- [ ] POST /api/ollama/ask 實作
+- [ ] GET /api/ollama/stream 實作
+- [ ] Swagger 註解完整
+- [ ] 4+ 整合測試全數通過
+- [ ] Swagger UI 手動測試成功
+
+---
+
+### Story 5: 前端整合與端到端測試 (Phase 5)
+估時: 2 - 4 小時 (選項 A) / 2-5 天 (選項 B)  
+優先級: ⭐⭐ 中等 (可選)  
+前置依賴: Story 4 完成  
+AC (Acceptance Criteria):
+- 前端技術選型已決定
+- 如執行選項 A: 靜態頁面正常運作
+- 一次性問答功能正常
+- 串流問答功能正常
+- 錯誤處理正確顯示
+
+關鍵決策點:
+- [ ] 選擇前端策略（A: 靜態頁面 / B: 現代框架 / C: 僅 API）
+
+DoD (Definition of Done) (如執行):
+- [ ] 前端檔案複製/建立完成
+- [ ] API 整合完成
+- [ ] 瀏覽器手動測試通過
+- [ ] 無 JavaScript 錯誤
+
+---
+
+### Story 6: 整體測試與文件完善
+估時: 2 - 3 小時  
+優先級: ⭐⭐ 中等  
+前置依賴: Story 4 完成 (Story 5 可選)  
+AC (Acceptance Criteria):
+- 整合測試計劃全數執行通過
+- 測試覆蓋率報告產出
+- README.md 更新完成
+- 所有交付清單項目勾選完成
+
+DoD (Definition of Done):
+- [ ] Ollama 端到端測試通過
+- [ ] JaCoCo 測試報告產出
+- [ ] 文件與截圖齊全
+- [ ] Git commit 整理完成
+- [ ] 專案可交付
+
+---
+
+## 📊 整體時程估算
+
+- 必要任務 (Story 1-4 + Story 6): 約 11-16 小時
+- 含前端 (加上 Story 5 選項 A): 約 13-20 小時
+- 完整前端框架 (Story 5 選項 B): 約 3-5 天
+
+---
+
+## ⚠️ 風險與依賴
+
+### 外部依賴
+- ⚠️ Ollama 服務必須正常運作
+- ⚠️ llama3.1:8b 模型必須已下載
+- ⚠️ 網路連線穩定（首次下載模型需時）
+
+### 技術風險
+1. Spring Boot 版本差異 (4.0.0 → 3.5.5)
+   - 緩解: 優先測試核心功能
+2. Java 版本差異 (17 → 21)
+   - 緩解: 編譯階段驗證
+3. 串流測試複雜度
+   - 緩解: 使用整合測試 + 手動測試
+
+---
+
+## 🚀 快速開始
+
+執行前準備:
+```bash
+# 1. 確認 Ollama 已安裝
+ollama --version
+
+# 2. 啟動 Ollama 服務
+ollama serve
+
+# 3. 下載模型（首次執行，約 4.7GB）
+ollama pull llama3.1:8b
+
+# 4. 驗證模型已載入
+ollama list
+```
+
+開始執行 Story 1:
+```bash
+cd demo2-spring-ai-init
+mvn clean compile
+# 檢查編譯結果，記錄版本資訊
+```
+
+
+測試案例:
+```java
+POST /api/ollama/ask
+Request: {"question": "台灣在哪裡？"}
+Response: {"success": true, "data": "台灣是位於東亞的島嶼...", "message": null}
+
+GET /api/ollama/stream?question=台灣在哪裡
+Response: text/event-stream (Server-Sent Events)
+```
