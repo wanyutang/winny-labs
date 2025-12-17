@@ -72,4 +72,4 @@ Optional.ofNullable(service.getComment())
 ## 參考來源
 在檢視 Spring Boot JPA 套件時可以看到各別 function 都有押上 `@Nullable` 的標示，建議大型專案可以參考在共用 function 明確標示 `@Nullable` 的規範以維持專案品質。
 
-![[./attachments/20251217W-MethodNull-SpringBoot.png]]
+![[20251217W-MethodNull-SpringBoot.png]]
