@@ -1,19 +1,33 @@
 ---
 status: done
 priority: normal
-scheduled: 2025-12-17
-dateCreated: 2025-12-17T14:46:04.093+08:00
-dateModified: 2025-12-17T15:17:01.413+08:00
+scheduled: 2025-12-17T00:00:00.000Z
+dateCreated: 2025-12-17T06:46:04.093Z
+dateModified: 2025-12-17T07:17:01.413Z
 tags:
   - task
-completedDate: 2025-12-17
+completedDate: 2025-12-17T00:00:00.000Z
+gists:
+  - id: 080fdadc6f764a80befeb32c522adb61
+    url: 'https://gist.github.com/wanyutang/080fdadc6f764a80befeb32c522adb61'
+    createdAt: '2025-12-17T07:25:30Z'
+    updatedAt: '2025-12-17T07:27:54Z'
+    filename: winnygist.labs.Method 回傳值 Null 標註原則-Spring Boot.md
+    isPublic: true
+    baseUrl: 'https://api.github.com'
 ---
+
+# Method 回傳值 Null 標註原則-Spring Boot
 
 本文件說明在 Spring Boot 專案中，如何使用 `@NotNull` 與 `@Nullable` 來明確定義 method 回傳值的 null 行為，以降低 `NullPointerException` 發生風險，並提升程式碼可讀性與 IDE 輔助效果。
 
 ---
 > 摘要重點：  
 > 看到 `@Nullable` → 呼叫端一定要處理 null
+
+## Table of Contents
+
+> Share as Gist 自動生成 Contents
 ## 基本原則
 
 - 通常專案預設 method 回傳值不應為 `null`
@@ -73,3 +87,7 @@ Optional.ofNullable(service.getComment())
 在檢視 Spring Boot JPA 套件時可以看到各別 function 都有押上 `@Nullable` 的標示，建議大型專案可以參考在共用 function 明確標示 `@Nullable` 的規範以維持專案品質。
 
 ![[20251217W-MethodNull-SpringBoot.png]]
+## 相關連結
+
+- https://github.com/wanyutang/winny-labs/tree/main/Notes
+- https://gist.github.com/search?q=winnygist.labs
