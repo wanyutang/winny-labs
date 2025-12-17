@@ -10,7 +10,7 @@ gists:
   - id: 512709032e5aae47b7409b7d049272b0
     url: 'https://gist.github.com/wanyutang/512709032e5aae47b7409b7d049272b0'
     createdAt: 2025-11-21T07:23:31.000Z
-    updatedAt: '2025-12-15T06:59:40Z'
+    updatedAt: '2025-12-17T07:28:05Z'
     filename: winnygist.labs.Java 註解語法 Sample Code.md
     isPublic: true
     baseUrl: 'https://api.github.com'
@@ -188,7 +188,7 @@ private String fundType;
 
 ---
 
-# 相關連結
+## 相關連結
 
 - https://github.com/wanyutang/winny-labs/tree/main/Notes
 - https://gist.github.com/search?q=winnygist.labs
