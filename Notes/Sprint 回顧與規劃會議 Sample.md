@@ -11,7 +11,7 @@ gists:
   - id: 1ec39e5861b34209f91ea3a7f0eac1ee
     url: 'https://gist.github.com/wanyutang/1ec39e5861b34209f91ea3a7f0eac1ee'
     createdAt: '2025-12-15T06:30:45Z'
-    updatedAt: '2025-12-17T07:28:17Z'
+    updatedAt: '2025-12-22T06:03:00Z'
     filename: winnygist.labs.Sprint 回顧與規劃會議 Sample.md
     isPublic: true
     baseUrl: 'https://api.github.com'
@@ -126,7 +126,7 @@ gists:
 ## 行事曆簡易版
 
 ```markdown
-## Java Pre-Sprint 3 Meeting Flow
+## Pre-Sprint 3 Meeting Flow
 
 - Review last sprint results
 	- Check unfinished or blocked tasks
