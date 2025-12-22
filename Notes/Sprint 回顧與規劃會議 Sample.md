@@ -123,6 +123,24 @@ gists:
 如對議程或準備事項有疑問，會前可先提出討論。
 ```
 
+## 行事曆簡易版
+
+```markdown
+## Java Pre-Sprint 3 Meeting Flow
+
+- Review last sprint results
+	- Check unfinished or blocked tasks
+	- Clarify Sprint 3 goals
+- Review and refine backlog items (Java tasks)
+	- Estimate tasks (story points or time)
+	- Confirm priorities and scope
+	- Identify risks or dependencies
+- Assign owners (if needed)
+	- Confirm sprint timeline and capacity
+	- Agree on Definition of Done
+- Q&A and next steps
+```
+
 ## 相關連結
 
 - https://github.com/wanyutang/winny-labs/tree/main/Notes
