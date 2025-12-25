@@ -11,12 +11,12 @@ gists:
   - id: ffdc733769a01000a5da88d54f142904
     url: 'https://gist.github.com/wanyutang/ffdc733769a01000a5da88d54f142904'
     createdAt: '2025-12-25T04:05:29Z'
-    updatedAt: '2025-12-25T04:06:41Z'
+    updatedAt: '2025-12-25T04:28:22Z'
     filename: winnygist.labs.交付日前安排 Code Review 與 Demo 計劃.md
     isPublic: true
     baseUrl: 'https://api.github.com'
 ---
-# 交付日前安排 Code Review 與 Demo 計劃
+                                                                                      # 交付日前安排 Code Review 與 Demo 計劃
 
 回顧過往 Sprint 經驗，部分任務在 Due Date 前缺乏正式 Review，導致問題與風險集中在交付前才被發現，影響交付品質與時程可預期性。
 
