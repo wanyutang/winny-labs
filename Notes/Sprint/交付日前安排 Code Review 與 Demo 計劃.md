@@ -1,16 +1,29 @@
 ---
 status: done
 priority: normal
-scheduled: 2025-12-25
-dateCreated: 2025-12-25T11:38:13.163+08:00
-dateModified: 2025-12-25T11:48:09.692+08:00
+scheduled: 2025-12-25T00:00:00.000Z
+dateCreated: 2025-12-25T03:38:13.163Z
+dateModified: 2025-12-25T03:48:09.692Z
 tags:
   - task
-completedDate: 2025-12-25
+completedDate: 2025-12-25T00:00:00.000Z
+gists:
+  - id: ffdc733769a01000a5da88d54f142904
+    url: 'https://gist.github.com/wanyutang/ffdc733769a01000a5da88d54f142904'
+    createdAt: '2025-12-25T04:05:29Z'
+    updatedAt: '2025-12-25T04:06:25Z'
+    filename: winnygist.labs.交付日前安排 Code Review 與 Demo 計劃.md
+    isPublic: true
+    baseUrl: 'https://api.github.com'
 ---
 # 交付日前安排 Code Review 與 Demo 計劃
 
 回顧過往 Sprint 經驗，部分任務在 Due Date 前缺乏正式 Review，導致問題與風險集中在交付前才被發現，影響交付品質與時程可預期性。
+
+## Table of Contents
+
+> Share as Gist 自動生成 Contents
+
 
 ## 改善作法與原則
 
@@ -37,3 +50,8 @@ completedDate: 2025-12-25
 - Sprint 中至少一項任務實際於交付日前完成 Code Review 與 Demo
 - 任務卡上明確記錄 Review 時間與簡要結論
 - 於下次 Sprint Retrospective 回顧此改善項目是否有效提升交付品質
+
+## 相關連結
+
+- https://github.com/wanyutang/winny-labs/tree/main/Notes
+- https://gist.github.com/search?q=winnygist.labs
