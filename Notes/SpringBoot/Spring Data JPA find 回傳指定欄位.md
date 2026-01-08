@@ -10,7 +10,7 @@ gists:
   - id: cb27718689d71852a7664601621e05a9
     url: 'https://gist.github.com/wanyutang/cb27718689d71852a7664601621e05a9'
     createdAt: 2026-01-08T07:12:10.000Z
-    updatedAt: '2026-01-08T07:12:37Z'
+    updatedAt: '2026-01-08T08:56:56Z'
     filename: winnygist.labs.Spring Data JPA find 回傳指定欄位.md
     isPublic: true
     baseUrl: 'https://api.github.com'
@@ -19,13 +19,18 @@ completedDate: 2026-01-08T00:00:00.000Z
 
 ## 目標
 
-
 在 Spring Data JPA 中，我們經常需要查詢資料：
 
 - 整個 Entity（例如 findById）
 - 單個欄位（使用 Projection Interface，不需整個 entity）
 
 以下示範如何使用 projection interface 取單欄位，並與原生 findById 返回整個 entity 做對比。
+
+
+## Table of Contents
+
+> Share as Gist 自動生成 Contents
+
 
 ---
 
@@ -150,3 +155,8 @@ void demoFullEntity() {
 - 查不到資料安全回傳 null
 - 方法通用，可套用到不同使用者資料或其他 entity
 - 對比原生 findById：projection 更適合單欄位查詢需求
+
+## 相關連結
+
+- https://github.com/wanyutang/winny-labs/tree/main/Notes
+- https://gist.github.com/search?q=winnygist.labs
