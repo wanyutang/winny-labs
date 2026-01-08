@@ -1,15 +1,21 @@
 ---
 status: done
 priority: normal
-scheduled: 2026-01-04
-dateCreated: 2026-01-04T13:03:38.770+08:00
-dateModified: 2026-01-04T13:07:41.788+08:00
+scheduled: 2026-01-04T00:00:00.000Z
+dateCreated: 2026-01-04T05:03:38.770Z
+dateModified: 2026-01-04T05:07:41.788Z
 tags:
   - task
-completedDate: 2026-01-04
+completedDate: 2026-01-04T00:00:00.000Z
+gists:
+  - id: f314f260dccf5c55b497adbaf34ebc51
+    url: 'https://gist.github.com/wanyutang/f314f260dccf5c55b497adbaf34ebc51'
+    createdAt: '2026-01-08T07:11:42Z'
+    updatedAt: '2026-01-08T07:11:58Z'
+    filename: winnygist.labs.Spring Boot AOP TraceId Demo 實作指南.md
+    isPublic: true
+    baseUrl: 'https://api.github.com'
 ---
-
-
 
 # Spring Boot AOP TraceId Demo 實作指南
 
