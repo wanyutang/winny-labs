@@ -10,7 +10,7 @@ gists:
   - id: cb27718689d71852a7664601621e05a9
     url: 'https://gist.github.com/wanyutang/cb27718689d71852a7664601621e05a9'
     createdAt: 2026-01-08T07:12:10.000Z
-    updatedAt: '2026-01-08T08:56:56Z'
+    updatedAt: '2026-01-08T08:58:46Z'
     filename: winnygist.labs.Spring Data JPA find 回傳指定欄位.md
     isPublic: true
     baseUrl: 'https://api.github.com'
@@ -34,7 +34,7 @@ completedDate: 2026-01-08T00:00:00.000Z
 
 ---
 
-## 1. Entity 定義
+## Entity 定義
 
 ```java
 @Data
@@ -64,7 +64,7 @@ public class UserAccount {
 
 ---
 
-## 2. 單欄位 Projection Interface 定義
+## 單欄位 Projection Interface 定義
 
 ```java
 public interface PointsOnly {
@@ -78,7 +78,7 @@ public interface PointsOnly {
 
 ---
 
-## 3. Repository 定義
+## Repository 定義
 
 ```java
 @Repository
@@ -96,9 +96,9 @@ public interface UserAccountRepository
 
 ---
 
-## 4. 使用示範
+## 使用示範
 
-### 4.1 單欄位取值（Projection）
+### 單欄位取值（Projection）
 
 ```java
 @Test
@@ -115,7 +115,7 @@ void demoProjection() {
 - 查不到資料：points 為 null
 - 查到資料：取得 points 值
 
-### 4.2 整個 Entity 取值（原生 findById 對比）
+### 整個 Entity 取值（原生 findById 對比）
 
 ```java
 @Test
@@ -135,7 +135,7 @@ void demoFullEntity() {
 
 ---
 
-## 5. 設計說明
+## 設計說明
 
 - Projection Interface：
     - 只定義需要欄位 getter
