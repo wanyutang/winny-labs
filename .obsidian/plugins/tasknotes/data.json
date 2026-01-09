@@ -222,6 +222,7 @@
     }
   ],
   "recurrenceMigrated": false,
+  "lastSeenVersion": "4.3.0",
   "showReleaseNotesOnUpdate": true,
   "showTrackedTasksInStatusBar": false,
   "autoStopTimeTrackingOnComplete": true,
@@ -310,6 +311,5 @@
     "defaultEventDuration": 60,
     "includeObsidianLink": true,
     "defaultReminderMinutes": null
-  },
-  "lastSeenVersion": "4.3.0"
+  }
 }
