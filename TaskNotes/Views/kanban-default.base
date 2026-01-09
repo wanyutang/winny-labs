@@ -1,0 +1,25 @@
+filters:
+  and:
+    - file.hasTag("task")
+views:
+  - type: tasknotesKanban
+    name: Kanban Board
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - status
+      - priority
+      - due
+      - scheduled
+      - projects
+      - contexts
+      - file.tags
+      - blockedBy
+      - file.name
+      - recurrence
+      - complete_instances
+    options:
+      columnWidth: 280
+      hideEmptyColumns: false
+    columnOrder: '{"note.status":["none","open","in-progress","done"]}'
