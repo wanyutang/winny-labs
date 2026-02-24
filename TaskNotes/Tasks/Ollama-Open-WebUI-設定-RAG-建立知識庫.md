@@ -1,3 +1,10 @@
+---
+tags:
+  - task
+status: in-progress
+dateModified: 2026-02-24T14:31:38.275+08:00
+---
+
 ## RAG 文件格式與系統資源限制
 
 - 支援檔案格式：**txt、Markdown、PDF、Parquet**
